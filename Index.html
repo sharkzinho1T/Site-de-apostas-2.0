@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Bet - Login</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial; }
+        body { background: #0a1a2b; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background: #162b3a; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; border: 1px solid #00ff88; }
+        h1 { color: #00ff88; text-align: center; margin-bottom: 30px; }
+        input { width: 100%; padding: 15px; margin: 10px 0; background: #0f2b3f; border: 1px solid #00ff884d; border-radius: 10px; color: white; }
+        button { width: 100%; padding: 15px; background: #00ff88; color: #0a1a2b; border: none; border-radius: 10px; font-weight: bold; font-size: 18px; margin: 10px 0; cursor: pointer; }
+        .link { color: #00ff88; text-align: center; margin-top: 20px; display: block; text-decoration: none; }
+        .erro { color: #e94560; text-align: center; margin: 10px 0; display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏆 MINHA BET</h1>
+        
+        <div id="erroLogin" class="erro">Email ou senha incorretos!</div>
+        
+        <input type="email" id="email" placeholder="Seu email" value="admin@email.com">
+        <input type="password" id="senha" placeholder="Sua senha" value="123456">
+        
+        <button onclick="fazerLogin()">ENTRAR</button>
+        
+        <a href="cadastro.html" class="link">Não tem conta? Cadastre-se</a>
+    </div>
+    
+    <script>
+        function fazerLogin() {
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            
+            // SIMULAÇÃO - Em site real, isso consultaria o banco de dados
+            // Por enquanto, vamos criar um login fixo para testar
+            if (email === 'admin@email.com' && senha === '123456') {
+                // Salva usuário logado
+                localStorage.setItem('usuario_logado', JSON.stringify({
+                    nome: 'Admin',
+                    email: 'admin@email.com',
+                    saldo: 1000
+                }));
+                // Redireciona para o site de apostas
+                window.location.href = 'apostas.html';
+            } else {
+                document.getElementById('erroLogin').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
