@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial; }
+        body { background: #0a1a2b; color: white; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { color: #e94560; text-align: center; margin: 20px 0; }
+        .card { background: #162b3a; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #00ff88; }
+        h2 { color: #00ff88; margin-bottom: 15px; }
+        .usuario-item { background: #0f2b3f; padding: 10px; margin: 5px 0; border-radius: 5px; display: flex; justify-content: space-between; }
+        button { background: #e94560; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; }
+        input { background: #0f2b3f; border: 1px solid #00ff88; color: white; padding: 5px; margin: 0 5px; border-radius: 3px; width: 80px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>👑 PAINEL ADMINISTRATIVO</h1>
+        
+        <div class="card">
+            <h2>📊 USUÁRIOS CADASTRADOS</h2>
+            <div id="listaUsuarios">
+                <div class="usuario-item">
+                    <span>Admin (admin@email.com)</span>
+                    <span>Saldo: R$ 1000</span>
+                    <div>
+                        <input type="number" value="1000" style="width: 80px;" id="saldoAdmin">
+                        <button onclick="alterarSaldo('admin@email.com')">Alterar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>⚙️ CONFIGURAÇÕES DO JOGO</h2>
+            <p>RTP Atual: <span id="rtpAtual">95%</span></p>
+            <input type="range" id="rtpRange" min="1" max="99" value="95" style="width: 100%;">
+            <button onclick="salvarRTP()">Salvar Configurações</button>
+        </div>
+    </div>
+    
+    <script>
+        function alterarSaldo(email) {
+            const novoSaldo = document.getElementById('saldoAdmin').value;
+            alert('Em site real, saldo de ' + email + ' alterado para R$ ' + novoSaldo);
+        }
+        
+        function salvarRTP() {
+            const rtp = document.getElementById('rtpRange').value;
+            localStorage.setItem('rtp_config', rtp);
+            document.getElementById('rtpAtual').textContent = rtp + '%';
+            alert('RTP alterado para ' + rtp + '%');
+        }
+    </script>
+</body>
+</html>
