@@ -4,29 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minha Bet - Apostas</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial; }
-        body { background: #0a1a2b; color: white; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
         
-        /* HEADER COM USUÁRIO */
+        body {
+            background: #0a1a2b;
+            color: white;
+        }
+        
+        /* CABEÇALHO */
         .header {
             background: #0f2b3f;
-            padding: 20px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 3px solid #00ff88;
+            flex-wrap: wrap;
+        }
+        
+        .logo {
+            color: #00ff88;
+            font-size: 24px;
+            font-weight: bold;
         }
         
         .usuario-info {
             display: flex;
             align-items: center;
             gap: 15px;
+            flex-wrap: wrap;
         }
         
         .usuario-nome {
             color: #00ff88;
             font-weight: bold;
+            background: #162b3a;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid #00ff88;
         }
         
         .usuario-saldo {
@@ -34,6 +56,13 @@
             padding: 8px 15px;
             border-radius: 20px;
             border: 1px solid #00ff88;
+            font-weight: bold;
+        }
+        
+        .usuario-saldo span {
+            color: #00ff88;
+            font-size: 18px;
+            margin-left: 5px;
         }
         
         .btn-sair {
@@ -43,17 +72,26 @@
             padding: 8px 15px;
             border-radius: 10px;
             cursor: pointer;
+            font-weight: bold;
         }
         
-        /* RESTO DO CSS (igual ao que te passei antes) */
+        /* BANNER */
         .banner {
             background: linear-gradient(135deg, #1a4b6d, #0f2b3f);
             margin: 20px;
             padding: 30px;
             border-radius: 15px;
             text-align: center;
+            border: 1px solid #00ff88;
         }
         
+        .banner h2 {
+            color: #00ff88;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        /* ÁREA DO JOGO */
         .area-crash {
             background: #0f2b3f;
             margin: 20px;
@@ -63,42 +101,130 @@
             border: 2px solid #00ff88;
         }
         
-        .multiplicador {
-            font-size: 48px;
+        .area-crash h3 {
             color: #00ff88;
-            margin: 15px 0;
+            margin-bottom: 15px;
+            font-size: 24px;
         }
         
-        .btn-apostar {
-            background: #00ff88;
-            color: #0a1a2b;
-            border: none;
-            padding: 15px;
-            width: 100%;
-            border-radius: 10px;
+        .multiplicador {
+            font-size: 64px;
             font-weight: bold;
-            font-size: 18px;
-            margin: 5px 0;
-            cursor: pointer;
+            color: #00ff88;
+            text-shadow: 0 0 20px #00ff88;
+            margin: 20px 0;
+            font-family: monospace;
+        }
+        
+        .controles {
+            max-width: 300px;
+            margin: 0 auto;
         }
         
         .valor-aposta {
             width: 100%;
-            padding: 12px;
-            background: #162b3a;
-            border: 1px solid #00ff88;
-            color: white;
-            border-radius: 8px;
+            padding: 15px;
             margin: 10px 0;
+            background: #162b3a;
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            color: white;
+            font-size: 18px;
+            text-align: center;
+        }
+        
+        .btn-apostar {
+            width: 100%;
+            padding: 15px;
+            background: #00ff88;
+            color: #0a1a2b;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 20px;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+        
+        .btn-apostar:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-parar {
+            width: 100%;
+            padding: 15px;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 20px;
+            margin: 5px 0;
+            cursor: pointer;
+            display: none;
+        }
+        
+        .status {
+            color: #ccc;
+            margin-top: 15px;
+            padding: 10px;
+            background: #162b3a;
+            border-radius: 8px;
+        }
+        
+        /* OUTROS JOGOS */
+        .secao-jogos {
+            padding: 20px;
+        }
+        
+        .secao-titulo {
+            color: #00ff88;
+            margin: 20px 0 15px;
+            font-size: 22px;
+            border-left: 4px solid #00ff88;
+            padding-left: 15px;
+        }
+        
+        .grade-jogos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+        
+        .card-jogo {
+            background: #162b3a;
+            width: 47%;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #00ff884d;
+        }
+        
+        .card-jogo h4 {
+            color: #00ff88;
+            margin: 10px 0;
+        }
+        
+        /* RODAPÉ */
+        .footer {
+            background: #0f2b3f;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            border-top: 2px solid #00ff88;
+            font-size: 12px;
+            color: #888;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1 style="color: #00ff88;">🏆 MINHA BET</h1>
+        <div class="logo">🏆 MINHA BET</div>
         <div class="usuario-info">
             <span class="usuario-nome" id="nomeUsuario">Carregando...</span>
-            <span class="usuario-saldo" id="saldoUsuario">R$ 0,00</span>
+            <span class="usuario-saldo">R$ <span id="saldoUsuario">0,00</span></span>
             <button class="btn-sair" onclick="sair()">SAIR</button>
         </div>
     </div>
@@ -112,105 +238,193 @@
         <h3>🎮 JOGO CRASH</h3>
         <div class="multiplicador" id="multiplicador">1.00x</div>
         
-        <input type="number" id="valorAposta" class="valor-aposta" value="10" min="1">
-        <button class="btn-apostar" id="btnApostar" onclick="iniciarJogo()">APOSTAR</button>
-        <button class="btn-apostar" id="btnParar" style="background: #e94560; display: none;" onclick="pararJogo()">RETIRAR</button>
+        <div class="controles">
+            <input type="number" id="valorAposta" class="valor-aposta" placeholder="Valor da aposta" value="10" min="1">
+            <button class="btn-apostar" id="btnApostar" onclick="iniciarJogo()">APOSTAR</button>
+            <button class="btn-parar" id="btnParar" onclick="pararJogo()">RETIRAR</button>
+        </div>
         
-        <p id="statusJogo" style="color: #ccc;">Clique em APOSTAR para começar</p>
+        <div class="status" id="statusJogo">
+            👆 Clique em APOSTAR para começar
+        </div>
+    </div>
+    
+    <div class="secao-jogos">
+        <h3 class="secao-titulo">⚽ ESPORTES</h3>
+        <div class="grade-jogos">
+            <div class="card-jogo" onclick="alert('Em breve!')">
+                <div style="font-size: 40px;">⚽</div>
+                <h4>Futebol</h4>
+                <p>Odds 2.10</p>
+            </div>
+            <div class="card-jogo" onclick="alert('Em breve!')">
+                <div style="font-size: 40px;">🏀</div>
+                <h4>Basquete</h4>
+                <p>Odds 1.95</p>
+            </div>
+        </div>
+        
+        <h3 class="secao-titulo">🎰 CASSINO</h3>
+        <div class="grade-jogos">
+            <div class="card-jogo" onclick="alert('Em breve!')">
+                <div style="font-size: 40px;">🎰</div>
+                <h4>Slots</h4>
+                <p>Jackpot</p>
+            </div>
+            <div class="card-jogo" onclick="alert('Em breve!')">
+                <div style="font-size: 40px;">🎲</div>
+                <h4>Roleta</h4>
+                <p>Ao vivo</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>⚠️ Jogue com responsabilidade | Proibido para menores de 18 anos</p>
+        <p>© 2024 Minha Bet - Todos os direitos reservados</p>
     </div>
     
     <script>
         // ============================================
-        // VERIFICA SE USUÁRIO ESTÁ LOGADO
+        // 🚨 COLE SUAS CREDENCIAIS DO SUPABASE AQUI!
         // ============================================
+        
+        // 1️⃣ COLE SUA PROJECT URL (MESMA DOS OUTROS)
+        const SUPABASE_URL = 'https://dqsstopjszttbgbtuyyy.supabase.co';
+        
+        // 2️⃣ COLE SUA ANON PUBLIC KEY (MESMA DOS OUTROS)
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxc3N0b3Bqc3p0dGJnYnR1eXl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTc4NDgsImV4cCI6MjA4OTE3Mzg0OH0.6q8AinOjG2zF9xwFQtedFiAWvyA8XJsLtClBr5gxMPw';
+        
+        // ============================================
+        // NÃO MEXA DAQUI PARA BAIXO
+        // ============================================
+        
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // Verifica se usuário está logado
         const usuarioLogado = JSON.parse(localStorage.getItem('usuario_logado'));
         
         if (!usuarioLogado) {
-            // Se não estiver logado, volta para o login
             window.location.href = 'index.html';
         }
         
-        // Mostra dados do usuário
-        document.getElementById('nomeUsuario').textContent = usuarioLogado.nome;
-        document.getElementById('saldoUsuario').textContent = 'R$ ' + usuarioLogado.saldo.toFixed(2);
+        // Elementos da tela
+        const nomeUsuarioEl = document.getElementById('nomeUsuario');
+        const saldoUsuarioEl = document.getElementById('saldoUsuario');
+        const multiplicadorEl = document.getElementById('multiplicador');
+        const btnApostar = document.getElementById('btnApostar');
+        const btnParar = document.getElementById('btnParar');
+        const valorAposta = document.getElementById('valorAposta');
+        const statusJogo = document.getElementById('statusJogo');
         
-        // ============================================
-        // JOGO CRASH (igual ao anterior)
-        // ============================================
-        let saldo = usuarioLogado.saldo;
+        // Estado do jogo
+        let saldoAtual = usuarioLogado.saldo;
+        let usuarioId = usuarioLogado.id;
         let jogoAtivo = false;
         let apostaAtual = 0;
         let multiplicadorAtual = 1.0;
         let intervaloJogo;
         
-        function atualizarSaldoTela() {
-            document.getElementById('saldoUsuario').textContent = 'R$ ' + saldo.toFixed(2);
-            // Atualiza no localStorage
-            usuarioLogado.saldo = saldo;
-            localStorage.setItem('usuario_logado', JSON.stringify(usuarioLogado));
+        // Mostra dados do usuário
+        nomeUsuarioEl.textContent = usuarioLogado.nome;
+        saldoUsuarioEl.textContent = saldoAtual.toFixed(2);
+        
+        // Função para atualizar saldo no banco
+        async function atualizarSaldoBanco(novoSaldo) {
+            const { error } = await supabase
+                .from('usuarios')
+                .update({ saldo: novoSaldo })
+                .eq('id', usuarioId);
+            
+            if (!error) {
+                saldoAtual = novoSaldo;
+                usuarioLogado.saldo = novoSaldo;
+                localStorage.setItem('usuario_logado', JSON.stringify(usuarioLogado));
+                saldoUsuarioEl.textContent = novoSaldo.toFixed(2);
+            }
         }
         
-        function iniciarJogo() {
+        // Função para registrar aposta
+        async function registrarAposta(valor, multiplicador, resultado) {
+            await supabase
+                .from('apostas')
+                .insert([{
+                    usuario_id: usuarioId,
+                    valor: valor,
+                    multiplicador: multiplicador,
+                    resultado: resultado
+                }]);
+        }
+        
+        // Iniciar jogo
+        async function iniciarJogo() {
             if (jogoAtivo) return;
             
-            const aposta = parseFloat(document.getElementById('valorAposta').value);
+            const aposta = parseFloat(valorAposta.value);
             
-            if (aposta <= 0 || aposta > saldo) {
+            if (aposta <= 0 || aposta > saldoAtual) {
                 alert('Valor inválido ou saldo insuficiente!');
                 return;
             }
             
-            saldo -= aposta;
+            // Debita aposta
+            await atualizarSaldoBanco(saldoAtual - aposta);
             apostaAtual = aposta;
-            atualizarSaldoTela();
             
+            // Prepara o jogo
             jogoAtivo = true;
             multiplicadorAtual = 1.0;
-            document.getElementById('multiplicador').textContent = '1.00x';
-            document.getElementById('btnApostar').style.display = 'none';
-            document.getElementById('btnParar').style.display = 'block';
-            document.getElementById('statusJogo').textContent = '⚡ Jogo em andamento...';
+            multiplicadorEl.textContent = '1.00x';
+            btnApostar.style.display = 'none';
+            btnParar.style.display = 'block';
+            statusJogo.textContent = '⚡ Jogo em andamento...';
             
-            // Simula o jogo
+            // Decide se vai crashar cedo
+            const vaiCrasharCedo = Math.random() < 0.3; // 30% de chance
+            const maxMultiplicador = vaiCrasharCedo ? 2.5 : 15;
+            
             let tempo = 0;
-            const vaiCrashar = Math.random() < 0.3; // 30% de chance de crash rápido
-            
             intervaloJogo = setInterval(() => {
                 tempo += 0.2;
                 multiplicadorAtual = Math.pow(1.3, tempo);
                 
-                if (multiplicadorAtual > (vaiCrashar ? 2.5 : 15)) {
+                if (multiplicadorAtual > maxMultiplicador) {
                     // Crashou!
                     clearInterval(intervaloJogo);
-                    document.getElementById('multiplicador').textContent = '💥 CRASH!';
-                    document.getElementById('statusJogo').textContent = '❌ Você perdeu R$ ' + apostaAtual.toFixed(2);
+                    multiplicadorEl.textContent = '💥 CRASH!';
+                    statusJogo.textContent = `❌ Você perdeu R$ ${apostaAtual.toFixed(2)}`;
+                    
+                    registrarAposta(apostaAtual, multiplicadorAtual, 'perdeu');
                     
                     jogoAtivo = false;
-                    document.getElementById('btnApostar').style.display = 'block';
-                    document.getElementById('btnParar').style.display = 'none';
+                    btnApostar.style.display = 'block';
+                    btnParar.style.display = 'none';
                 } else {
-                    document.getElementById('multiplicador').textContent = multiplicadorAtual.toFixed(2) + 'x';
+                    multiplicadorEl.textContent = multiplicadorAtual.toFixed(2) + 'x';
                 }
             }, 200);
         }
         
-        function pararJogo() {
+        // Parar jogo (retirar)
+        async function pararJogo() {
             if (!jogoAtivo) return;
             
             clearInterval(intervaloJogo);
             
             const premio = apostaAtual * multiplicadorAtual;
-            saldo += premio;
-            atualizarSaldoTela();
+            await atualizarSaldoBanco(saldoAtual + premio);
             
-            document.getElementById('multiplicador').textContent = '✅ RETIRADO!';
-            document.getElementById('statusJogo').textContent = '🎉 Você ganhou R$ ' + premio.toFixed(2);
+            multiplicadorEl.textContent = '✅ RETIRADO!';
+            statusJogo.textContent = `🎉 Você ganhou R$ ${premio.toFixed(2)}`;
+            
+            registrarAposta(apostaAtual, multiplicadorAtual, 'ganhou');
             
             jogoAtivo = false;
-            document.getElementById('btnApostar').style.display = 'block';
-            document.getElementById('btnParar').style.display = 'none';
+            btnApostar.style.display = 'block';
+            btnParar.style.display = 'none';
         }
         
+        // Sair
         function sair() {
             localStorage.removeItem('usuario_logado');
             window.location.href = 'index.html';
