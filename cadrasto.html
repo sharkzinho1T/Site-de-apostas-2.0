@@ -4,26 +4,115 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minha Bet - Cadastro</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial; }
-        body { background: #0a1a2b; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .container { background: #162b3a; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; border: 1px solid #00ff88; }
-        h1 { color: #00ff88; text-align: center; margin-bottom: 30px; }
-        input { width: 100%; padding: 15px; margin: 10px 0; background: #0f2b3f; border: 1px solid #00ff884d; border-radius: 10px; color: white; }
-        button { width: 100%; padding: 15px; background: #00ff88; color: #0a1a2b; border: none; border-radius: 10px; font-weight: bold; font-size: 18px; margin: 10px 0; cursor: pointer; }
-        .link { color: #00ff88; text-align: center; margin-top: 20px; display: block; text-decoration: none; }
-        .sucesso { color: #00ff88; text-align: center; margin: 10px 0; display: none; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background: #0a1a2b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: #162b3a;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid #00ff88;
+            box-shadow: 0 0 30px rgba(0,255,136,0.2);
+        }
+        
+        h1 {
+            color: #00ff88;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            text-shadow: 0 0 10px rgba(0,255,136,0.5);
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: #0f2b3f;
+            border: 1px solid #00ff884d;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #00ff88;
+            color: #0a1a2b;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 20px 0 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+            background: #00cc66;
+        }
+        
+        .link {
+            color: #00ff88;
+            text-align: center;
+            margin-top: 15px;
+            display: block;
+            text-decoration: none;
+        }
+        
+        .erro {
+            color: #e94560;
+            text-align: center;
+            margin: 10px 0;
+            display: none;
+            padding: 10px;
+            background: #e9456020;
+            border-radius: 5px;
+        }
+        
+        .sucesso {
+            color: #00ff88;
+            text-align: center;
+            margin: 10px 0;
+            display: none;
+            padding: 10px;
+            background: #00ff8820;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>📝 CRIAR CONTA</h1>
         
-        <div id="sucessoMsg" class="sucesso">Cadastro realizado! Redirecionando...</div>
+        <div id="erroCadastro" class="erro"></div>
+        <div id="sucessoCadastro" class="sucesso">Cadastro realizado! Redirecionando...</div>
         
-        <input type="text" id="nome" placeholder="Seu nome">
-        <input type="email" id="email" placeholder="Seu email">
-        <input type="password" id="senha" placeholder="Sua senha">
+        <input type="text" id="nome" placeholder="Seu nome completo">
+        <input type="email" id="email" placeholder="Seu melhor email">
+        <input type="password" id="senha" placeholder="Crie uma senha">
         
         <button onclick="fazerCadastro()">CADASTRAR</button>
         
@@ -31,25 +120,94 @@
     </div>
     
     <script>
-        function fazerCadastro() {
+        // ============================================
+        // 🚨 COLE SUAS CREDENCIAIS DO SUPABASE AQUI!
+        // ============================================
+        
+        // 1️⃣ COLE SUA PROJECT URL entre as aspas (MESMA DO index.html)
+        const SUPABASE_URL = 'https://dqsstopjszttbgbtuyyy.supabase.co';
+        
+        // 2️⃣ COLE SUA ANON PUBLIC KEY entre as aspas (MESMA DO index.html)
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxc3N0b3Bqc3p0dGJnYnR1eXl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTc4NDgsImV4cCI6MjA4OTE3Mzg0OH0.6q8AinOjG2zF9xwFQtedFiAWvyA8XJsLtClBr5gxMPw';
+        
+        // ============================================
+        // NÃO MEXA DAQUI PARA BAIXO
+        // ============================================
+        
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        async function fazerCadastro() {
             const nome = document.getElementById('nome').value;
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
             
+            // Limpa mensagens anteriores
+            document.getElementById('erroCadastro').style.display = 'none';
+            document.getElementById('sucessoCadastro').style.display = 'none';
+            
+            // Validações
             if (!nome || !email || !senha) {
-                alert('Preencha todos os campos!');
+                document.getElementById('erroCadastro').textContent = 'Preencha todos os campos!';
+                document.getElementById('erroCadastro').style.display = 'block';
                 return;
             }
             
-            // SIMULAÇÃO - Aqui você salvaria no banco de dados
-            // Por enquanto, vamos apenas simular o cadastro
+            if (senha.length < 3) {
+                document.getElementById('erroCadastro').textContent = 'Senha muito curta!';
+                document.getElementById('erroCadastro').style.display = 'block';
+                return;
+            }
             
-            document.getElementById('sucessoMsg').style.display = 'block';
+            // Mostra loading
+            document.querySelector('button').textContent = 'CADASTRANDO...';
             
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 2000);
+            try {
+                // Verifica se email já existe
+                const { data: existente } = await supabase
+                    .from('usuarios')
+                    .select('email')
+                    .eq('email', email);
+                
+                if (existente && existente.length > 0) {
+                    document.getElementById('erroCadastro').textContent = 'Este email já está cadastrado!';
+                    document.getElementById('erroCadastro').style.display = 'block';
+                    document.querySelector('button').textContent = 'CADASTRAR';
+                    return;
+                }
+                
+                // Insere no banco de dados
+                const { data, error } = await supabase
+                    .from('usuarios')
+                    .insert([
+                        { 
+                            nome: nome, 
+                            email: email, 
+                            senha: senha,
+                            saldo: 100 // Bônus de cadastro
+                        }
+                    ]);
+                
+                if (error) {
+                    document.getElementById('erroCadastro').textContent = 'Erro: ' + error.message;
+                    document.getElementById('erroCadastro').style.display = 'block';
+                    document.querySelector('button').textContent = 'CADASTRAR';
+                    return;
+                }
+                
+                // Mostra sucesso
+                document.getElementById('sucessoCadastro').style.display = 'block';
+                
+                // Redireciona após 2 segundos
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+                
+            } catch (err) {
+                document.getElementById('erroCadastro').textContent = 'Erro: ' + err.message;
+                document.getElementById('erroCadastro').style.display = 'block';
+                document.querySelector('button').textContent = 'CADASTRAR';
+            }
         }
     </script>
 </body>
-          </html>
+</html>
