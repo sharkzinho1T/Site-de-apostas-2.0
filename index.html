@@ -14,7 +14,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #0a1a2b 0%, #1a2f3f 100%);
+            background: #0a0a0f;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -23,32 +23,56 @@
         }
         
         .container {
-            background: rgba(22, 43, 58, 0.95);
-            backdrop-filter: blur(10px);
+            background: #1a1a1a;
             padding: 40px 30px;
-            border-radius: 30px;
+            border-radius: 20px;
             width: 100%;
-            max-width: 400px;
-            border: 1px solid rgba(0, 255, 136, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            max-width: 450px;
+            border: 2px solid #ff3333;
+            box-shadow: 0 0 30px rgba(255, 51, 51, 0.3);
         }
         
         h1 {
-            color: #00ff88;
+            color: #ff3333;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             font-size: 36px;
             font-weight: bold;
-            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+        }
+        
+        .linha-divisoria {
+            border: none;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff3333, #ff6666, #ff3333, transparent);
+            margin: 10px 0 25px 0;
+            width: 100%;
+        }
+        
+        .campo-label {
+            color: #ff9999;
+            font-size: 14px;
+            font-weight: bold;
+            margin-left: 5px;
+            margin-bottom: 5px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .campo-input {
+            width: 100%;
+            margin-bottom: 20px;
         }
         
         input {
             width: 100%;
             padding: 15px 20px;
-            margin: 10px 0;
-            background: rgba(15, 43, 63, 0.8);
-            border: 2px solid rgba(0, 255, 136, 0.2);
-            border-radius: 15px;
+            background: #2a2a2a;
+            border: 2px solid #ff3333;
+            border-radius: 10px;
             color: white;
             font-size: 16px;
             transition: all 0.3s;
@@ -56,31 +80,40 @@
         
         input:focus {
             outline: none;
-            border-color: #00ff88;
-            background: rgba(15, 43, 63, 1);
+            border-color: #ff6666;
+            box-shadow: 0 0 15px rgba(255, 51, 51, 0.5);
+            background: #333333;
+        }
+        
+        input::placeholder {
+            color: #666;
         }
         
         button {
             width: 100%;
             padding: 15px;
-            background: #00ff88;
-            color: #0a1a2b;
+            background: linear-gradient(45deg, #ff3333, #ff6666);
+            color: white;
             border: none;
-            border-radius: 15px;
+            border-radius: 10px;
             font-weight: bold;
-            font-size: 18px;
-            margin: 20px 0 10px;
+            font-size: 20px;
+            margin: 30px 0 20px;
             cursor: pointer;
             transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 5px 15px rgba(255, 51, 51, 0.4);
         }
         
         button:active {
             transform: scale(0.98);
-            background: #00cc66;
+            background: linear-gradient(45deg, #ff1a1a, #ff4d4d);
+            box-shadow: 0 2px 10px rgba(255, 51, 51, 0.8);
         }
         
         .link {
-            color: #00ff88;
+            color: #ff9999;
             text-align: center;
             margin-top: 20px;
             display: block;
@@ -88,20 +121,24 @@
             font-size: 16px;
         }
         
+        .link:hover {
+            color: #ff3333;
+        }
+        
         .erro {
-            color: #ff4d4d;
+            color: #ff3333;
             text-align: center;
             margin: 10px 0;
             display: none;
-            padding: 12px;
-            background: rgba(255, 77, 77, 0.1);
-            border-radius: 10px;
-            border-left: 4px solid #ff4d4d;
+            padding: 10px;
+            background: rgba(255, 51, 51, 0.1);
+            border-radius: 5px;
+            border-left: 4px solid #ff3333;
         }
         
-        .info {
-            color: #888;
+        .footer-text {
             text-align: center;
+            color: #666;
             font-size: 12px;
             margin-top: 30px;
         }
@@ -109,32 +146,41 @@
 </head>
 <body>
     <div class="container">
-        <h1>🏆 MINHA BET</h1>
+        <h1>🔴 LOGIN</h1>
+        
+        <hr class="linha-divisoria">
         
         <div id="erroLogin" class="erro">Email ou senha incorretos!</div>
         
-        <input type="email" id="email" placeholder="Seu email" value="admin@email.com">
-        <input type="password" id="senha" placeholder="Sua senha" value="123456">
+        <div class="campo-label">E-MAIL</div>
+        <div class="campo-input">
+            <input type="email" id="email" placeholder="seu@email.com" value="admin@email.com">
+        </div>
+        
+        <hr class="linha-divisoria">
+        
+        <div class="campo-label">SENHA</div>
+        <div class="campo-input">
+            <input type="password" id="senha" placeholder="Sua senha" value="123456">
+        </div>
+        
+        <hr class="linha-divisoria">
         
         <button onclick="fazerLogin()">ENTRAR</button>
         
-        <a href="cadastro.html" class="link">🔰 Não tem conta? Cadastre-se</a>
+        <a href="cadastro.html" class="link">Não tem conta? Cadastre-se</a>
         
-        <p class="info">💰 Bônus de R$100 no primeiro depósito</p>
+        <div class="footer-text">
+            🔴 Bônus de R$100 no primeiro depósito
+        </div>
     </div>
     
     <script>
         // ============================================
-        // 🔴 COLE SUAS CREDENCIAIS DO SUPABASE AQUI!
+        // SUAS CREDENCIAIS DO SUPABASE (COLE AQUI!)
         // ============================================
-        
-        // 1️⃣ COLE SUA PROJECT URL entre as aspas
         const SUPABASE_URL = 'https://dqsstopjszttbgbtuyyy.supabase.co';
-        
-        // 2️⃣ COLE SUA ANON PUBLIC KEY entre as aspas
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxc3N0b3Bqc3p0dGJnYnR1eXl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTc4NDgsImV4cCI6MjA4OTE3Mzg0OH0.6q8AinOjG2zF9xwFQtedFiAWvyA8XJsLtClBr5gxMPw';
-        
-        // ============================================
         
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
@@ -142,7 +188,6 @@
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
             
-            // Mostra loading
             const btn = document.querySelector('button');
             btn.textContent = 'ENTRANDO...';
             btn.disabled = true;
@@ -154,12 +199,7 @@
                     .eq('email', email)
                     .eq('senha', senha);
                 
-                if (error) {
-                    alert('Erro no banco: ' + error.message);
-                    btn.textContent = 'ENTRAR';
-                    btn.disabled = false;
-                    return;
-                }
+                if (error) throw error;
                 
                 if (usuarios && usuarios.length > 0) {
                     const usuario = usuarios[0];
@@ -168,10 +208,11 @@
                         id: usuario.id,
                         nome: usuario.nome,
                         email: usuario.email,
+                        whatsapp: usuario.whatsapp,
                         saldo: usuario.saldo
                     }));
                     
-                    window.location.href = 'apostas.html';
+                    window.location.href = 'dashboard.html';
                 } else {
                     document.getElementById('erroLogin').style.display = 'block';
                     btn.textContent = 'ENTRAR';
