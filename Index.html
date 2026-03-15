@@ -4,15 +4,101 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minha Bet - Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial; }
-        body { background: #0a1a2b; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .container { background: #162b3a; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; border: 1px solid #00ff88; }
-        h1 { color: #00ff88; text-align: center; margin-bottom: 30px; }
-        input { width: 100%; padding: 15px; margin: 10px 0; background: #0f2b3f; border: 1px solid #00ff884d; border-radius: 10px; color: white; }
-        button { width: 100%; padding: 15px; background: #00ff88; color: #0a1a2b; border: none; border-radius: 10px; font-weight: bold; font-size: 18px; margin: 10px 0; cursor: pointer; }
-        .link { color: #00ff88; text-align: center; margin-top: 20px; display: block; text-decoration: none; }
-        .erro { color: #e94560; text-align: center; margin: 10px 0; display: none; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background: #0a1a2b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: #162b3a;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid #00ff88;
+            box-shadow: 0 0 30px rgba(0,255,136,0.2);
+        }
+        
+        h1 {
+            color: #00ff88;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 32px;
+            text-shadow: 0 0 10px rgba(0,255,136,0.5);
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: #0f2b3f;
+            border: 1px solid #00ff884d;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #00ff88;
+            color: #0a1a2b;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+            background: #00cc66;
+        }
+        
+        .link {
+            color: #00ff88;
+            text-align: center;
+            margin-top: 20px;
+            display: block;
+            text-decoration: none;
+        }
+        
+        .erro {
+            color: #e94560;
+            text-align: center;
+            margin: 10px 0;
+            display: none;
+            padding: 10px;
+            background: #e9456020;
+            border-radius: 5px;
+            border-left: 3px solid #e94560;
+        }
+        
+        .info {
+            color: #888;
+            text-align: center;
+            font-size: 12px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -27,26 +113,67 @@
         <button onclick="fazerLogin()">ENTRAR</button>
         
         <a href="cadastro.html" class="link">Não tem conta? Cadastre-se</a>
+        
+        <p class="info">💰 Bônus de R$100 no primeiro depósito</p>
     </div>
     
     <script>
-        function fazerLogin() {
+        // ============================================
+        // 🚨 COLE SUAS CREDENCIAIS DO SUPABASE AQUI!
+        // ============================================
+        
+        // 1️⃣ COLE SUA PROJECT URL entre as aspas
+        const SUPABASE_URL = 'https://SEU_ID_AQUI.supabase.co';
+        
+        // 2️⃣ COLE SUA ANON PUBLIC KEY entre as aspas
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+        
+        // ============================================
+        // NÃO MEXA DAQUI PARA BAIXO
+        // ============================================
+        
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        async function fazerLogin() {
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
             
-            // SIMULAÇÃO - Em site real, isso consultaria o banco de dados
-            // Por enquanto, vamos criar um login fixo para testar
-            if (email === 'admin@email.com' && senha === '123456') {
-                // Salva usuário logado
-                localStorage.setItem('usuario_logado', JSON.stringify({
-                    nome: 'Admin',
-                    email: 'admin@email.com',
-                    saldo: 1000
-                }));
-                // Redireciona para o site de apostas
-                window.location.href = 'apostas.html';
-            } else {
-                document.getElementById('erroLogin').style.display = 'block';
+            // Mostra loading
+            document.querySelector('button').textContent = 'ENTRANDO...';
+            
+            try {
+                // Busca usuário no banco de dados
+                const { data: usuarios, error } = await supabase
+                    .from('usuarios')
+                    .select('*')
+                    .eq('email', email)
+                    .eq('senha', senha);
+                
+                if (error) {
+                    alert('Erro no banco de dados: ' + error.message);
+                    document.querySelector('button').textContent = 'ENTRAR';
+                    return;
+                }
+                
+                if (usuarios && usuarios.length > 0) {
+                    const usuario = usuarios[0];
+                    
+                    // Salva dados do usuário (menos a senha)
+                    localStorage.setItem('usuario_logado', JSON.stringify({
+                        id: usuario.id,
+                        nome: usuario.nome,
+                        email: usuario.email,
+                        saldo: usuario.saldo
+                    }));
+                    
+                    window.location.href = 'apostas.html';
+                } else {
+                    document.getElementById('erroLogin').style.display = 'block';
+                    document.querySelector('button').textContent = 'ENTRAR';
+                }
+            } catch (err) {
+                alert('Erro: ' + err.message);
+                document.querySelector('button').textContent = 'ENTRAR';
             }
         }
     </script>
