@@ -10,49 +10,54 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
         
         body {
-            background: #0a1a2b;
+            background: linear-gradient(135deg, #0a1a2b 0%, #1a2f3f 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            padding: 20px;
         }
         
         .container {
-            background: #162b3a;
-            padding: 30px;
-            border-radius: 20px;
-            width: 90%;
+            background: rgba(22, 43, 58, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            border-radius: 30px;
+            width: 100%;
             max-width: 400px;
-            border: 1px solid #00ff88;
-            box-shadow: 0 0 30px rgba(0,255,136,0.2);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
         }
         
         h1 {
             color: #00ff88;
             text-align: center;
             margin-bottom: 30px;
-            font-size: 32px;
-            text-shadow: 0 0 10px rgba(0,255,136,0.5);
+            font-size: 36px;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
         }
         
         input {
             width: 100%;
-            padding: 15px;
+            padding: 15px 20px;
             margin: 10px 0;
-            background: #0f2b3f;
-            border: 1px solid #00ff884d;
-            border-radius: 10px;
+            background: rgba(15, 43, 63, 0.8);
+            border: 2px solid rgba(0, 255, 136, 0.2);
+            border-radius: 15px;
             color: white;
             font-size: 16px;
+            transition: all 0.3s;
         }
         
         input:focus {
             outline: none;
             border-color: #00ff88;
+            background: rgba(15, 43, 63, 1);
         }
         
         button {
@@ -61,10 +66,10 @@
             background: #00ff88;
             color: #0a1a2b;
             border: none;
-            border-radius: 10px;
+            border-radius: 15px;
             font-weight: bold;
             font-size: 18px;
-            margin: 10px 0;
+            margin: 20px 0 10px;
             cursor: pointer;
             transition: all 0.3s;
         }
@@ -80,24 +85,25 @@
             margin-top: 20px;
             display: block;
             text-decoration: none;
+            font-size: 16px;
         }
         
         .erro {
-            color: #e94560;
+            color: #ff4d4d;
             text-align: center;
             margin: 10px 0;
             display: none;
-            padding: 10px;
-            background: #e9456020;
-            border-radius: 5px;
-            border-left: 3px solid #e94560;
+            padding: 12px;
+            background: rgba(255, 77, 77, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #ff4d4d;
         }
         
         .info {
             color: #888;
             text-align: center;
             font-size: 12px;
-            margin-top: 20px;
+            margin-top: 30px;
         }
     </style>
 </head>
@@ -112,14 +118,14 @@
         
         <button onclick="fazerLogin()">ENTRAR</button>
         
-        <a href="cadastro.html" class="link">Não tem conta? Cadastre-se</a>
+        <a href="cadastro.html" class="link">🔰 Não tem conta? Cadastre-se</a>
         
         <p class="info">💰 Bônus de R$100 no primeiro depósito</p>
     </div>
     
     <script>
         // ============================================
-        // 🚨 COLE SUAS CREDENCIAIS DO SUPABASE AQUI!
+        // 🔴 COLE SUAS CREDENCIAIS DO SUPABASE AQUI!
         // ============================================
         
         // 1️⃣ COLE SUA PROJECT URL entre as aspas
@@ -129,8 +135,6 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxc3N0b3Bqc3p0dGJnYnR1eXl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTc4NDgsImV4cCI6MjA4OTE3Mzg0OH0.6q8AinOjG2zF9xwFQtedFiAWvyA8XJsLtClBr5gxMPw';
         
         // ============================================
-        // NÃO MEXA DAQUI PARA BAIXO
-        // ============================================
         
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
@@ -139,10 +143,11 @@
             const senha = document.getElementById('senha').value;
             
             // Mostra loading
-            document.querySelector('button').textContent = 'ENTRANDO...';
+            const btn = document.querySelector('button');
+            btn.textContent = 'ENTRANDO...';
+            btn.disabled = true;
             
             try {
-                // Busca usuário no banco de dados
                 const { data: usuarios, error } = await supabase
                     .from('usuarios')
                     .select('*')
@@ -150,15 +155,15 @@
                     .eq('senha', senha);
                 
                 if (error) {
-                    alert('Erro no banco de dados: ' + error.message);
-                    document.querySelector('button').textContent = 'ENTRAR';
+                    alert('Erro no banco: ' + error.message);
+                    btn.textContent = 'ENTRAR';
+                    btn.disabled = false;
                     return;
                 }
                 
                 if (usuarios && usuarios.length > 0) {
                     const usuario = usuarios[0];
                     
-                    // Salva dados do usuário (menos a senha)
                     localStorage.setItem('usuario_logado', JSON.stringify({
                         id: usuario.id,
                         nome: usuario.nome,
@@ -169,11 +174,13 @@
                     window.location.href = 'apostas.html';
                 } else {
                     document.getElementById('erroLogin').style.display = 'block';
-                    document.querySelector('button').textContent = 'ENTRAR';
+                    btn.textContent = 'ENTRAR';
+                    btn.disabled = false;
                 }
             } catch (err) {
                 alert('Erro: ' + err.message);
-                document.querySelector('button').textContent = 'ENTRAR';
+                btn.textContent = 'ENTRAR';
+                btn.disabled = false;
             }
         }
     </script>
