@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Bet - Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a1a 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .header {
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #ff3333;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            color: #ff3333;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .saldo-container {
+            background: #2a2a2a;
+            padding: 8px 15px;
+            border-radius: 30px;
+            border: 2px solid #ff3333;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .saldo-label {
+            color: #ff9999;
+            font-size: 14px;
+        }
+        
+        .saldo-valor {
+            color: #ff3333;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .btn-depositar {
+            background: #ff3333;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(255, 51, 51, 0.5);
+        }
+        
+        .foto-perfil {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #ff3333, #ff6666);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            border: 2px solid #ff3333;
+        }
+        
+        .banner {
+            background: linear-gradient(135deg, #ff3333, #ff6666);
+            margin: 20px;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+        }
+        
+        .banner h2 {
+            color: white;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .game-card {
+            background: #1a1a1a;
+            border: 2px solid #ff3333;
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .game-card:active {
+            transform: scale(0.95);
+            background: #ff3333;
+        }
+        
+        .game-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .game-title {
+            color: #ff3333;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .game-desc {
+            color: #ff9999;
+            font-size: 14px;
+        }
+        
+        .bottom-menu {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            background: #1a1a1a;
+            border-top: 2px solid #ff3333;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 600px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 30px 30px 0 0;
+        }
+        
+        .menu-item {
+            text-align: center;
+            color: #ff9999;
+            cursor: pointer;
+        }
+        
+        .menu-item.active {
+            color: #ff3333;
+        }
+        
+        .menu-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 80px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 350px;
+            border: 2px solid #ff3333;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h3 {
+            color: #ff3333;
+        }
+        
+        .close-modal {
+            color: #ff3333;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .perfil-info {
+            margin: 15px 0;
+        }
+        
+        .perfil-info p {
+            margin: 10px 0;
+            color: #ff9999;
+        }
+        
+        .perfil-info span {
+            color: white;
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🔴 BET</div>
+        
+        <div class="header-right">
+            <div class="saldo-container">
+                <span class="saldo-label">💰</span>
+                <span class="saldo-valor" id="saldoUsuario">R$ 0,00</span>
+            </div>
+            
+            <button class="btn-depositar" onclick="depositar()">DEPOSITAR</button>
+            
+            <div class="foto-perfil" onclick="mostrarPerfil()" id="fotoPerfil">
+                👤
+            </div>
+        </div>
+    </div>
+    
+    <div class="banner">
+        <h2>BÔNUS DE 100%</h2>
+        <p>ATÉ R$500 NO PRIMEIRO DEPÓSITO</p>
+    </div>
+    
+    <div class="games-grid">
+        <div class="game-card" onclick="irParaJogo('crash')">
+            <div class="game-icon">📈</div>
+            <div class="game-title">CRASH</div>
+            <div class="game-desc">Multiplique até 100x</div>
+        </div>
+        
+        <div class="game-card" onclick="irParaJogo('mines')">
+            <div class="game-icon">💣</div>
+            <div class="game-title">MINES</div>
+            <div class="game-desc">Em breve</div>
+        </div>
+        
+        <div class="game-card" onclick="irParaJogo('slots')">
+            <div class="game-icon">🎰</div>
+            <div class="game-title">SLOTS</div>
+            <div class="game-desc">Em breve</div>
+        </div>
+        
+        <div class="game-card" onclick="irParaJogo('historico')">
+            <div class="game-icon">📊</div>
+            <div class="game-title">HISTÓRICO</div>
+            <div class="game-desc">Suas apostas</div>
+        </div>
+    </div>
+    
+    <div class="bottom-menu">
+        <div class="menu-item active" onclick="irPara('inicio')">
+            <div class="menu-icon">🏠</div>
+            <div class="menu-label">Início</div>
+        </div>
+        <div class="menu-item" onclick="irPara('jogos')">
+            <div class="menu-icon">🎮</div>
+            <div class="menu-label">Jogos</div>
+        </div>
+        <div class="menu-item" onclick="irPara('promocoes')">
+            <div class="menu-icon">🎁</div>
+            <div class="menu-label">Promoções</div>
+        </div>
+        <div class="menu-item" onclick="sair()">
+            <div class="menu-icon">🚪</div>
+            <div class="menu-label">Sair</div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>⚠️ Jogue com responsabilidade | Proibido para menores de 18 anos</p>
+        <p>© 2024 Minha Bet</p>
+    </div>
+    
+    <div id="modalPerfil" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>👤 MEU PERFIL</h3>
+                <span class="close-modal" onclick="fecharModal()">✖</span>
+            </div>
+            <div class="perfil-info">
+                <p>Nome: <span id="perfilNome">Carregando...</span></p>
+                <p>Email: <span id="perfilEmail">Carregando...</span></p>
+                <p>WhatsApp: <span id="perfilWhatsapp">Carregando...</span></p>
+                <p>Saldo: <span id="perfilSaldo">R$ 0,00</span></p>
+            </div>
+            <button class="btn-depositar" style="width: 100%; margin-top: 15px;" onclick="depositar()">DEPOSITAR</button>
+        </div>
+    </div>
+    
+    <script>
+        // ============================================
+        // SUAS CREDENCIAIS DO SUPABASE (COLE AQUI!)
+        // ============================================
+        const SUPABASE_URL = 'https://dqsstopjszttbgbtuyyy.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxc3N0b3Bqc3p0dGJnYnR1eXl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTc4NDgsImV4cCI6MjA4OTE3Mzg0OH0.6q8AinOjG2zF9xwFQtedFiAWvyA8XJsLtClBr5gxMPw';
+        
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        const usuarioLogado = JSON.parse(localStorage.getItem('usuario_logado'));
+        
+        if (!usuarioLogado) {
+            window.location.href = 'index.html';
+        }
+        
+        function atualizarInterface() {
+            document.getElementById('saldoUsuario').textContent = 'R$ ' + usuarioLogado.saldo.toFixed(2);
+            
+            if (usuarioLogado.nome) {
+                document.getElementById('fotoPerfil').textContent = usuarioLogado.nome.charAt(0).toUpperCase();
+            }
+            
+            document.getElementById('perfilNome').textContent = usuarioLogado.nome;
+            document.getElementById('perfilEmail').textContent = usuarioLogado.email;
+            document.getElementById('perfilWhatsapp').textContent = usuarioLogado.whatsapp || 'Não informado';
+            document.getElementById('perfilSaldo').textContent = 'R$ ' + usuarioLogado.saldo.toFixed(2);
+        }
+        
+        atualizarInterface();
+        
+        function irParaJogo(jogo) {
+            switch(jogo) {
+                case 'crash':
+                    window.location.href = 'apostas.html';
+                    break;
+                default:
+                    alert('🎮 Jogo em desenvolvimento!');
+            }
+        }
+        
+        function depositar() {
+            window.location.href = 'depositar.html';
+        }
+        
+        function mostrarPerfil() {
+            document.getElementById('modalPerfil').style.display = 'flex';
+        }
+        
+        function fecharModal() {
+            document.getElementById('modalPerfil').style.display = 'none';
+        }
+        
+        function irPara(pagina) {
+            if (pagina === 'inicio') {
+                window.location.href = 'dashboard.html';
+            } else {
+                alert('📱 Página em desenvolvimento');
+            }
+        }
+        
+        function sair() {
+            localStorage.removeItem('usuario_logado');
+            window.location.href = 'index.html';
+        }
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalPerfil');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        async function atualizarSaldo() {
+            const { data } = await supabase
+                .from('usuarios')
+                .select('saldo')
+                .eq('id', usuarioLogado.id)
+                .single();
+            
+            if (data) {
+                usuarioLogado.saldo = data.saldo;
+                localStorage.setItem('usuario_logado', JSON.stringify(usuarioLogado));
+                document.getElementById('saldoUsuario').textContent = 'R$ ' + data.saldo.toFixed(2);
+                document.getElementById('perfilSaldo').textContent = 'R$ ' + data.saldo.toFixed(2);
+            }
+        }
+        
+        setInterval(atualizarSaldo, 5000);
+    </script>
+</body>
+</html>
