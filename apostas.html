@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Bet - Apostas</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial; }
+        body { background: #0a1a2b; color: white; }
+        
+        /* HEADER COM USUÁRIO */
+        .header {
+            background: #0f2b3f;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #00ff88;
+        }
+        
+        .usuario-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .usuario-nome {
+            color: #00ff88;
+            font-weight: bold;
+        }
+        
+        .usuario-saldo {
+            background: #162b3a;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid #00ff88;
+        }
+        
+        .btn-sair {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        /* RESTO DO CSS (igual ao que te passei antes) */
+        .banner {
+            background: linear-gradient(135deg, #1a4b6d, #0f2b3f);
+            margin: 20px;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .area-crash {
+            background: #0f2b3f;
+            margin: 20px;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid #00ff88;
+        }
+        
+        .multiplicador {
+            font-size: 48px;
+            color: #00ff88;
+            margin: 15px 0;
+        }
+        
+        .btn-apostar {
+            background: #00ff88;
+            color: #0a1a2b;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+        
+        .valor-aposta {
+            width: 100%;
+            padding: 12px;
+            background: #162b3a;
+            border: 1px solid #00ff88;
+            color: white;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 style="color: #00ff88;">🏆 MINHA BET</h1>
+        <div class="usuario-info">
+            <span class="usuario-nome" id="nomeUsuario">Carregando...</span>
+            <span class="usuario-saldo" id="saldoUsuario">R$ 0,00</span>
+            <button class="btn-sair" onclick="sair()">SAIR</button>
+        </div>
+    </div>
+    
+    <div class="banner">
+        <h2>BÔNUS DE 100%</h2>
+        <p>ATÉ R$500 NO PRIMEIRO DEPÓSITO</p>
+    </div>
+    
+    <div class="area-crash">
+        <h3>🎮 JOGO CRASH</h3>
+        <div class="multiplicador" id="multiplicador">1.00x</div>
+        
+        <input type="number" id="valorAposta" class="valor-aposta" value="10" min="1">
+        <button class="btn-apostar" id="btnApostar" onclick="iniciarJogo()">APOSTAR</button>
+        <button class="btn-apostar" id="btnParar" style="background: #e94560; display: none;" onclick="pararJogo()">RETIRAR</button>
+        
+        <p id="statusJogo" style="color: #ccc;">Clique em APOSTAR para começar</p>
+    </div>
+    
+    <script>
+        // ============================================
+        // VERIFICA SE USUÁRIO ESTÁ LOGADO
+        // ============================================
+        const usuarioLogado = JSON.parse(localStorage.getItem('usuario_logado'));
+        
+        if (!usuarioLogado) {
+            // Se não estiver logado, volta para o login
+            window.location.href = 'index.html';
+        }
+        
+        // Mostra dados do usuário
+        document.getElementById('nomeUsuario').textContent = usuarioLogado.nome;
+        document.getElementById('saldoUsuario').textContent = 'R$ ' + usuarioLogado.saldo.toFixed(2);
+        
+        // ============================================
+        // JOGO CRASH (igual ao anterior)
+        // ============================================
+        let saldo = usuarioLogado.saldo;
+        let jogoAtivo = false;
+        let apostaAtual = 0;
+        let multiplicadorAtual = 1.0;
+        let intervaloJogo;
+        
+        function atualizarSaldoTela() {
+            document.getElementById('saldoUsuario').textContent = 'R$ ' + saldo.toFixed(2);
+            // Atualiza no localStorage
+            usuarioLogado.saldo = saldo;
+            localStorage.setItem('usuario_logado', JSON.stringify(usuarioLogado));
+        }
+        
+        function iniciarJogo() {
+            if (jogoAtivo) return;
+            
+            const aposta = parseFloat(document.getElementById('valorAposta').value);
+            
+            if (aposta <= 0 || aposta > saldo) {
+                alert('Valor inválido ou saldo insuficiente!');
+                return;
+            }
+            
+            saldo -= aposta;
+            apostaAtual = aposta;
+            atualizarSaldoTela();
+            
+            jogoAtivo = true;
+            multiplicadorAtual = 1.0;
+            document.getElementById('multiplicador').textContent = '1.00x';
+            document.getElementById('btnApostar').style.display = 'none';
+            document.getElementById('btnParar').style.display = 'block';
+            document.getElementById('statusJogo').textContent = '⚡ Jogo em andamento...';
+            
+            // Simula o jogo
+            let tempo = 0;
+            const vaiCrashar = Math.random() < 0.3; // 30% de chance de crash rápido
+            
+            intervaloJogo = setInterval(() => {
+                tempo += 0.2;
+                multiplicadorAtual = Math.pow(1.3, tempo);
+                
+                if (multiplicadorAtual > (vaiCrashar ? 2.5 : 15)) {
+                    // Crashou!
+                    clearInterval(intervaloJogo);
+                    document.getElementById('multiplicador').textContent = '💥 CRASH!';
+                    document.getElementById('statusJogo').textContent = '❌ Você perdeu R$ ' + apostaAtual.toFixed(2);
+                    
+                    jogoAtivo = false;
+                    document.getElementById('btnApostar').style.display = 'block';
+                    document.getElementById('btnParar').style.display = 'none';
+                } else {
+                    document.getElementById('multiplicador').textContent = multiplicadorAtual.toFixed(2) + 'x';
+                }
+            }, 200);
+        }
+        
+        function pararJogo() {
+            if (!jogoAtivo) return;
+            
+            clearInterval(intervaloJogo);
+            
+            const premio = apostaAtual * multiplicadorAtual;
+            saldo += premio;
+            atualizarSaldoTela();
+            
+            document.getElementById('multiplicador').textContent = '✅ RETIRADO!';
+            document.getElementById('statusJogo').textContent = '🎉 Você ganhou R$ ' + premio.toFixed(2);
+            
+            jogoAtivo = false;
+            document.getElementById('btnApostar').style.display = 'block';
+            document.getElementById('btnParar').style.display = 'none';
+        }
+        
+        function sair() {
+            localStorage.removeItem('usuario_logado');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
