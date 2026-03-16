@@ -377,7 +377,7 @@
             color: #dc2626;
         }
         
-        /* ===== MODAL DE LOGIN/CADASTRO - NOVO DESIGN ===== */
+        /* ===== MODAL DE LOGIN/CADASTRO ===== */
         .modal {
             display: none;
             position: fixed;
@@ -603,7 +603,7 @@
             background: #fee2e2;
             color: #dc2626;
             padding: 12px;
-            margin: 0 30px;
+            margin: 0 30px 20px;
             border-radius: 10px;
             text-align: center;
             font-size: 14px;
@@ -886,8 +886,8 @@
     
     <script>
         // CONFIGURAÇÃO DO SUPABASE
-        const SUPABASE_URL = 'https://SEU_ID_AQUI.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+        const SUPABASE_URL = 'https://dqsstopjszttbgbtuyyy.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxc3N0b3Bqc3p0dGJnYnR1eXl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTc4NDgsImV4cCI6MjA4OTE3Mzg0OH0.6q8AinOjG2zF9xwFQtedFiAWvyA8XJsLtClBr5gxMPw';
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
         let modo = 'login'; // 'login' ou 'cadastro'
