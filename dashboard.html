@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Bet - Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            background: #0a0a0f;
+            color: white;
+        }
+        
+        /* ===== CABEÇALHO ===== */
+        .header {
+            background: #1a1a1a;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #ff3333;
+        }
+        
+        .logo {
+            color: #ff3333;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        /* BOTÃO CADASTRO (quando deslogado) */
+        .btn-cadastro {
+            background: #ff3333;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 51, 51, 0.5);
+        }
+        
+        /* ÁREA DO USUÁRIO LOGADO (saldo + foto) */
+        .usuario-logado {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .saldo-container {
+            background: #2a2a2a;
+            padding: 8px 15px;
+            border-radius: 30px;
+            border: 2px solid #ff3333;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .saldo-label {
+            color: #ff9999;
+            font-size: 14px;
+        }
+        
+        .saldo-valor {
+            color: #ff3333;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .foto-perfil {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #ff3333, #ff6666);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            border: 2px solid #ff3333;
+        }
+        
+        /* ===== BANNER ===== */
+        .banner {
+            background: linear-gradient(135deg, #ff3333, #ff6666);
+            margin: 20px;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+        }
+        
+        .banner h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        /* ===== CARDS DE JOGOS ===== */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .game-card {
+            background: #1a1a1a;
+            border: 2px solid #ff3333;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .game-card:active {
+            transform: scale(0.95);
+            background: #ff3333;
+        }
+        
+        .game-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .game-title {
+            color: #ff3333;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        /* ===== MODAL DE LOGIN/CADASTRO ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            border: 2px solid #ff3333;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h2 {
+            color: #ff3333;
+        }
+        
+        .close-modal {
+            color: #ff3333;
+            font-size: 28px;
+            cursor: pointer;
+        }
+        
+        .modal input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: #2a2a2a;
+            border: 2px solid #ff3333;
+            border-radius: 10px;
+            color: white;
+        }
+        
+        .modal input:focus {
+            outline: none;
+            border-color: #ff6666;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .btn-login {
+            background: #ff3333;
+            color: white;
+        }
+        
+        .btn-cadastrar {
+            background: #2a2a2a;
+            color: #ff3333;
+            border: 2px solid #ff3333;
+        }
+        
+        .modal-footer {
+            text-align: center;
+            color: #ff9999;
+            cursor: pointer;
+        }
+        
+        .modal-footer:hover {
+            color: #ff3333;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🔴 MINHA BET</div>
+        
+        <!-- Área do canto direito -->
+        <div id="areaDireita">
+            <!-- Botão Cadastro (visível quando deslogado) -->
+            <button class="btn-cadastro" id="btnMostrarLogin">🔐 CADASTRO / LOGIN</button>
+            
+            <!-- Área do usuário logado (inicialmente oculta) -->
+            <div class="usuario-logado hidden" id="areaLogado">
+                <div class="saldo-container">
+                    <span class="saldo-label">💰</span>
+                    <span class="saldo-valor" id="saldoUsuario">R$ 0,00</span>
+                </div>
+                <div class="foto-perfil" id="fotoPerfil" onclick="mostrarPerfil()">👤</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="banner">
+        <h1>🎉 BÔNUS DE 100%</h1>
+        <p>ATÉ R$500 NO PRIMEIRO DEPÓSITO</p>
+    </div>
+    
+    <div class="games-grid">
+        <div class="game-card" onclick="alert('Jogo Crash - Em breve!')">
+            <div class="game-icon">📈</div>
+            <div class="game-title">CRASH</div>
+        </div>
+        <div class="game-card" onclick="alert('Jogo Mines - Em breve!')">
+            <div class="game-icon">💣</div>
+            <div class="game-title">MINES</div>
+        </div>
+        <div class="game-card" onclick="alert('Jogo Slots - Em breve!')">
+            <div class="game-icon">🎰</div>
+            <div class="game-title">SLOTS</div>
+        </div>
+        <div class="game-card" onclick="alert('Histórico - Em breve!')">
+            <div class="game-icon">📊</div>
+            <div class="game-title">HISTÓRICO</div>
+        </div>
+    </div>
+    
+    <!-- MODAL DE LOGIN/CADASTRO -->
+    <div class="modal" id="modalLogin">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitulo">🔐 ACESSAR CONTA</h2>
+                <span class="close-modal" onclick="fecharModal()">&times;</span>
+            </div>
+            
+            <div id="modalErro" style="color: red; text-align: center; margin: 10px 0; display: none;"></div>
+            
+            <input type="text" id="modalNome" placeholder="Seu nome" class="hidden">
+            <input type="email" id="modalEmail" placeholder="Seu e-mail" value="admin@email.com">
+            <input type="password" id="modalSenha" placeholder="Sua senha" value="123456">
+            <input type="text" id="modalWhatsapp" placeholder="WhatsApp" class="hidden">
+            
+            <div class="modal-buttons">
+                <button class="modal-btn btn-login" id="btnModalLogin" onclick="fazerLogin()">ENTRAR</button>
+                <button class="modal-btn btn-cadastrar" id="btnModalCadastrar" onclick="mostrarCadastro()">CADASTRAR</button>
+            </div>
+            
+            <div class="modal-footer" id="modalFooter" onclick="alternarModo()">
+                Não tem conta? Cadastre-se
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ============================================
+        // CONFIGURAÇÃO DO SUPABASE
+        // ============================================
+        const SUPABASE_URL = 'https://dqsstopjszttbgbtuyyy.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxc3N0b3Bqc3p0dGJnYnR1eXl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTc4NDgsImV4cCI6MjA4OTE3Mzg0OH0.6q8AinOjG2zF9xwFQtedFiAWvyA8XJsLtClBr5gxMPw';
+        
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // Estado da aplicação
+        let modo = 'login'; // 'login' ou 'cadastro'
+        let usuarioLogado = null;
+        
+        // ============================================
+        // VERIFICAR SE JÁ TEM USUÁRIO LOGADO
+        // ============================================
+        function verificarLogin() {
+            const saved = localStorage.getItem('usuario_logado');
+            if (saved) {
+                usuarioLogado = JSON.parse(saved);
+                mostrarUsuarioLogado();
+            }
+        }
+        
+        // ============================================
+        // MOSTRA ÁREA DO USUÁRIO LOGADO
+        // ============================================
+        function mostrarUsuarioLogado() {
+            document.getElementById('btnMostrarLogin').classList.add('hidden');
+            document.getElementById('areaLogado').classList.remove('hidden');
+            document.getElementById('saldoUsuario').textContent = 'R$ ' + usuarioLogado.saldo.toFixed(2);
+            
+            // Foto com a inicial do nome
+            const foto = document.getElementById('fotoPerfil');
+            if (usuarioLogado.nome) {
+                foto.textContent = usuarioLogado.nome.charAt(0).toUpperCase();
+            }
+        }
+        
+        // ============================================
+        // FUNÇÕES DO MODAL
+        // ============================================
+        function abrirModal() {
+            document.getElementById('modalLogin').style.display = 'flex';
+        }
+        
+        function fecharModal() {
+            document.getElementById('modalLogin').style.display = 'none';
+            resetarModal();
+        }
+        
+        function resetarModal() {
+            modo = 'login';
+            document.getElementById('modalTitulo').textContent = '🔐 ACESSAR CONTA';
+            document.getElementById('btnModalLogin').textContent = 'ENTRAR';
+            document.getElementById('modalNome').classList.add('hidden');
+            document.getElementById('modalWhatsapp').classList.add('hidden');
+            document.getElementById('modalFooter').textContent = 'Não tem conta? Cadastre-se';
+            document.getElementById('modalErro').style.display = 'none';
+        }
+        
+        function mostrarCadastro() {
+            modo = 'cadastro';
+            document.getElementById('modalTitulo').textContent = '📝 CRIAR CONTA';
+            document.getElementById('btnModalLogin').textContent = 'CADASTRAR';
+            document.getElementById('modalNome').classList.remove('hidden');
+            document.getElementById('modalWhatsapp').classList.remove('hidden');
+            document.getElementById('modalFooter').textContent = 'Já tem conta? Faça login';
+        }
+        
+        function alternarModo() {
+            if (modo === 'login') {
+                mostrarCadastro();
+            } else {
+                resetarModal();
+            }
+        }
+        
+        // ============================================
+        // FUNÇÃO DE LOGIN
+        // ============================================
+        async function fazerLogin() {
+            const email = document.getElementById('modalEmail').value;
+            const senha = document.getElementById('modalSenha').value;
+            
+            document.getElementById('modalErro').style.display = 'none';
+            
+            if (modo === 'login') {
+                // MODO LOGIN
+                try {
+                    const { data, error } = await supabase
+                        .from('usuarios')
+                        .select('*')
+                        .eq('email', email)
+                        .eq('senha', senha);
+                    
+                    if (error) throw error;
+                    
+                    if (data && data.length > 0) {
+                        usuarioLogado = data[0];
+                        localStorage.setItem('usuario_logado', JSON.stringify(usuarioLogado));
+                        fecharModal();
+                        mostrarUsuarioLogado();
+                    } else {
+                        document.getElementById('modalErro').textContent = 'Email ou senha incorretos!';
+                        document.getElementById('modalErro').style.display = 'block';
+                    }
+                } catch (err) {
+                    document.getElementById('modalErro').textContent = 'Erro: ' + err.message;
+                    document.getElementById('modalErro').style.display = 'block';
+                }
+                
+            } else {
+                // MODO CADASTRO
+                const nome = document.getElementById('modalNome').value;
+                const whatsapp = document.getElementById('modalWhatsapp').value;
+                
+                if (!nome || !email || !senha || !whatsapp) {
+                    document.getElementById('modalErro').textContent = 'Preencha todos os campos!';
+                    document.getElementById('modalErro').style.display = 'block';
+                    return;
+                }
+                
+                try {
+                    const { data, error } = await supabase
+                        .from('usuarios')
+                        .insert([{
+                            nome: nome,
+                            email: email,
+                            senha: senha,
+                            whatsapp: whatsapp,
+                            saldo: 100
+                        }])
+                        .select();
+                    
+                    if (error) throw error;
+                    
+                    if (data && data.length > 0) {
+                        usuarioLogado = data[0];
+                        localStorage.setItem('usuario_logado', JSON.stringify(usuarioLogado));
+                        fecharModal();
+                        mostrarUsuarioLogado();
+                    }
+                    
+                } catch (err) {
+                    document.getElementById('modalErro').textContent = 'Erro: ' + err.message;
+                    document.getElementById('modalErro').style.display = 'block';
+                }
+            }
+        }
+        
+        // ============================================
+        // FUNÇÃO DO PERFIL
+        // ============================================
+        function mostrarPerfil() {
+            alert(`👤 ${usuarioLogado.nome}\n📧 ${usuarioLogado.email}\n📱 ${usuarioLogado.whatsapp}\n💰 Saldo: R$ ${usuarioLogado.saldo}`);
+        }
+        
+        // ============================================
+        // EVENTO DO BOTÃO DE LOGIN
+        // ============================================
+        document.getElementById('btnMostrarLogin').addEventListener('click', abrirModal);
+        
+        // ============================================
+        // INICIALIZAÇÃO
+        // ============================================
+        verificarLogin();
+    </script>
+</body>
+</html>
