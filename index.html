@@ -166,8 +166,10 @@
         
         <hr class="linha-divisoria">
         
+        <!-- BOTÃO COM FUNÇÃO CORRETA -->
         <button onclick="fazerLogin()">ENTRAR</button>
         
+        <!-- LINK COM FUNÇÃO CORRETA -->
         <a href="cadastro.html" class="link">Não tem conta? Cadastre-se</a>
         
         <div class="footer-text">
@@ -182,43 +184,65 @@
         const SUPABASE_URL = 'https://dqsstopjszttbgbtuyyy.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxc3N0b3Bqc3p0dGJnYnR1eXl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTc4NDgsImV4cCI6MjA4OTE3Mzg0OH0.6q8AinOjG2zF9xwFQtedFiAWvyA8XJsLtClBr5gxMPw';
         
+        // Cria conexão com Supabase
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
+        // FUNÇÃO DE LOGIN
         async function fazerLogin() {
+            console.log('1. FUNÇÃO FAZER LOGIN FOI CHAMADA');
+            
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
+            
+            console.log('2. Email:', email, 'Senha:', senha);
             
             const btn = document.querySelector('button');
             btn.textContent = 'ENTRANDO...';
             btn.disabled = true;
             
             try {
+                console.log('3. Buscando usuário no banco...');
+                
                 const { data: usuarios, error } = await supabase
                     .from('usuarios')
                     .select('*')
                     .eq('email', email)
                     .eq('senha', senha);
                 
-                if (error) throw error;
+                console.log('4. Resposta:', usuarios, error);
+                
+                if (error) {
+                    console.error('Erro do Supabase:', error);
+                    throw error;
+                }
                 
                 if (usuarios && usuarios.length > 0) {
+                    console.log('5. Usuário encontrado!', usuarios[0]);
+                    
                     const usuario = usuarios[0];
                     
+                    // Salva no localStorage
                     localStorage.setItem('usuario_logado', JSON.stringify({
                         id: usuario.id,
                         nome: usuario.nome,
                         email: usuario.email,
-                        whatsapp: usuario.whatsapp,
                         saldo: usuario.saldo
                     }));
                     
+                    console.log('6. Redirecionando para dashboard.html');
+                    
+                    // REDIRECIONA!
                     window.location.href = 'dashboard.html';
+                    
                 } else {
+                    console.log('5. Usuário não encontrado');
                     document.getElementById('erroLogin').style.display = 'block';
                     btn.textContent = 'ENTRAR';
                     btn.disabled = false;
                 }
+                
             } catch (err) {
+                console.error('ERRO FINAL:', err);
                 alert('Erro: ' + err.message);
                 btn.textContent = 'ENTRAR';
                 btn.disabled = false;
