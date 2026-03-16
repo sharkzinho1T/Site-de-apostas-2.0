@@ -174,6 +174,10 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         
+        .hidden {
+            display: none !important;
+        }
+        
         /* ===== BANNER PRINCIPAL ===== */
         .hero {
             background: linear-gradient(135deg, #1e293b, #0f172a);
@@ -373,7 +377,7 @@
             color: #dc2626;
         }
         
-        /* ===== MODAL DE LOGIN ===== */
+        /* ===== MODAL DE LOGIN/CADASTRO - NOVO DESIGN ===== */
         .modal {
             display: none;
             position: fixed;
@@ -386,6 +390,12 @@
             z-index: 1000;
             justify-content: center;
             align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         
         .modal-content {
@@ -393,47 +403,126 @@
             border-radius: 30px;
             width: 90%;
             max-width: 450px;
-            padding: 40px;
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
         
         .modal-header {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: white;
+            padding: 40px 30px 30px;
             text-align: center;
-            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+        
+        .modal-logo {
+            font-size: 48px;
+            margin-bottom: 15px;
         }
         
         .modal-header h2 {
-            font-size: 28px;
-            margin-bottom: 10px;
+            font-size: 24px;
+            margin-bottom: 5px;
         }
         
         .modal-header p {
-            color: #64748b;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #475569;
+            font-weight: 500;
+            font-size: 14px;
         }
         
         .modal-input {
             width: 100%;
             padding: 15px;
-            margin: 10px 0;
             border: 2px solid #e2e8f0;
             border-radius: 15px;
-            font-size: 16px;
+            font-size: 15px;
             transition: all 0.2s;
         }
         
         .modal-input:focus {
             outline: none;
             border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
         }
         
-        .modal-buttons {
+        .checkbox-group {
             display: flex;
-            gap: 15px;
+            align-items: center;
+            gap: 10px;
             margin: 20px 0;
         }
         
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .checkbox-group label {
+            color: #64748b;
+            font-size: 14px;
+        }
+        
+        .checkbox-group a {
+            color: #dc2626;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
         .modal-btn {
-            flex: 1;
+            width: 100%;
             padding: 15px;
             border: none;
             border-radius: 15px;
@@ -443,35 +532,81 @@
             transition: all 0.2s;
         }
         
-        .btn-login-modal {
+        .btn-primary {
             background: #dc2626;
             color: white;
+            margin-bottom: 15px;
         }
         
-        .btn-login-modal:hover {
+        .btn-primary:hover {
             background: #b91c1c;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 38, 38, 0.3);
         }
         
-        .btn-register-modal {
+        .btn-secondary {
             background: #f1f5f9;
             color: #1e293b;
         }
         
-        .btn-register-modal:hover {
+        .btn-secondary:hover {
             background: #e2e8f0;
         }
         
-        .modal-footer {
+        .modal-divider {
             text-align: center;
-            color: #64748b;
-            cursor: pointer;
+            margin: 20px 0;
+            position: relative;
         }
         
-        .modal-footer:hover {
+        .modal-divider::before,
+        .modal-divider::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background: #e2e8f0;
+        }
+        
+        .modal-divider::before {
+            left: 0;
+        }
+        
+        .modal-divider::after {
+            right: 0;
+        }
+        
+        .modal-divider span {
+            background: white;
+            padding: 0 15px;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+        
+        .modal-footer {
+            padding: 0 30px 30px;
+            text-align: center;
+        }
+        
+        .modal-footer a {
+            color: #64748b;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .modal-footer a:hover {
             color: #dc2626;
         }
         
-        .hidden {
+        .modal-erro {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 12px;
+            margin: 0 30px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 14px;
             display: none;
         }
         
@@ -531,8 +666,8 @@
         <div class="user-area" id="userArea">
             <!-- Deslogado -->
             <div id="deslogadoView">
-                <button class="btn-login" onclick="abrirModal()">Entrar</button>
-                <button class="btn-register" onclick="abrirModalCadastro()">Cadastrar</button>
+                <button class="btn-login" onclick="abrirModal('login')">Entrar</button>
+                <button class="btn-register" onclick="abrirModal('cadastro')">Cadastrar</button>
             </div>
             
             <!-- Logado (invisível inicialmente) -->
@@ -652,25 +787,65 @@
     <!-- MODAL DE LOGIN/CADASTRO -->
     <div class="modal" id="modalLogin">
         <div class="modal-content">
+            <!-- Cabeçalho do Modal -->
             <div class="modal-header">
-                <h2 id="modalTitulo">🔐 Entrar na Conta</h2>
-                <p id="modalSubtitulo">Acesse sua conta para começar</p>
+                <button class="modal-close" onclick="fecharModal()">&times;</button>
+                <div class="modal-logo" id="modalLogo">🔴</div>
+                <h2 id="modalTitulo">Bem-vindo de volta!</h2>
+                <p id="modalSubtitulo">Acesse sua conta para continuar</p>
             </div>
             
-            <div id="modalErro" style="color: #dc2626; text-align: center; margin: 10px 0; display: none;"></div>
+            <!-- Mensagem de erro -->
+            <div id="modalErro" class="modal-erro"></div>
             
-            <input type="text" class="modal-input" id="modalNome" placeholder="Seu nome completo" style="display: none;">
-            <input type="email" class="modal-input" id="modalEmail" placeholder="Seu e-mail" value="admin@email.com">
-            <input type="password" class="modal-input" id="modalSenha" placeholder="Sua senha" value="123456">
-            <input type="text" class="modal-input" id="modalWhatsapp" placeholder="Seu WhatsApp" style="display: none;">
-            
-            <div class="modal-buttons">
-                <button class="modal-btn btn-login-modal" id="btnModalAcao" onclick="fazerLogin()">ENTRAR</button>
-                <button class="modal-btn btn-register-modal" id="btnModalAlternar" onclick="alternarModo()">CADASTRAR</button>
+            <!-- Formulário -->
+            <div class="modal-body">
+                <!-- Campos que só aparecem no cadastro -->
+                <div id="camposCadastro" style="display: none;">
+                    <div class="input-group">
+                        <label>Nome completo</label>
+                        <input type="text" class="modal-input" id="modalNome" placeholder="Digite seu nome">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>E-mail</label>
+                    <input type="email" class="modal-input" id="modalEmail" placeholder="seu@email.com" value="admin@email.com">
+                </div>
+                
+                <div class="input-group">
+                    <label>Senha</label>
+                    <input type="password" class="modal-input" id="modalSenha" placeholder="••••••••" value="123456">
+                </div>
+                
+                <!-- Campos que só aparecem no cadastro -->
+                <div id="camposCadastro2" style="display: none;">
+                    <div class="input-group">
+                        <label>WhatsApp</label>
+                        <input type="text" class="modal-input" id="modalWhatsapp" placeholder="(11) 99999-9999">
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="termos">
+                        <label for="termos">Concordo com os <a href="#">Termos de Uso</a></label>
+                    </div>
+                </div>
+                
+                <!-- Botões de ação -->
+                <button class="modal-btn btn-primary" id="btnModalAcao" onclick="fazerLogin()">ENTRAR</button>
+                
+                <div class="modal-divider">
+                    <span>ou</span>
+                </div>
+                
+                <button class="modal-btn btn-secondary" id="btnModalAlternar" onclick="alternarModo()">
+                    Criar nova conta
+                </button>
             </div>
             
-            <div class="modal-footer" id="modalFooter" onclick="alternarModo()">
-                Não tem conta? Cadastre-se
+            <!-- Rodapé do Modal -->
+            <div class="modal-footer">
+                <a href="#">Esqueceu a senha?</a>
             </div>
         </div>
     </div>
@@ -692,4 +867,186 @@
             </div>
             <div class="footer-col">
                 <h4>Jogos</h4>
+                <a href="#">Crash</a>
+                <a href="#">Mines</a>
+                <a href="#">Slots</a>
+                <a href="#">Roleta</a>
+            </div>
+            <div class="footer-col">
+                <h4>Redes Sociais</h4>
+                <a href="#">📱 Instagram</a>
+                <a href="#">💬 Telegram</a>
+                <a href="#">🐦 Twitter</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2024 Minha Bet. Todos os direitos reservados. 18+</p>
+        </div>
+    </div>
+    
+    <script>
+        // CONFIGURAÇÃO DO SUPABASE
+        const SUPABASE_URL = 'https://SEU_ID_AQUI.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        let modo = 'login'; // 'login' ou 'cadastro'
+        let usuarioLogado = JSON.parse(localStorage.getItem('usuario_logado')) || null;
+        
+        // Inicialização
+        if (usuarioLogado) {
+            mostrarUsuarioLogado();
+        }
+        
+        function mostrarUsuarioLogado() {
+            document.getElementById('deslogadoView').style.display = 'none';
+            document.getElementById('logadoView').classList.remove('hidden');
+            document.getElementById('saldoUsuario').textContent = 'R$ ' + usuarioLogado.saldo.toFixed(2);
+            
+            const avatar = document.getElementById('userAvatar');
+            avatar.textContent = usuarioLogado.nome.charAt(0).toUpperCase();
+        }
+        
+        function abrirModal(tipo) {
+            modo = tipo;
+            
+            if (tipo === 'login') {
+                document.getElementById('modalTitulo').textContent = 'Bem-vindo de volta!';
+                document.getElementById('modalSubtitulo').textContent = 'Acesse sua conta para continuar';
+                document.getElementById('modalLogo').textContent = '🔐';
+                document.getElementById('btnModalAcao').textContent = 'ENTRAR';
+                document.getElementById('btnModalAlternar').textContent = 'Criar nova conta';
+                document.getElementById('camposCadastro').style.display = 'none';
+                document.getElementById('camposCadastro2').style.display = 'none';
+            } else {
+                document.getElementById('modalTitulo').textContent = 'Criar conta grátis';
+                document.getElementById('modalSubtitulo').textContent = 'Ganhe R$100 de bônus';
+                document.getElementById('modalLogo').textContent = '📝';
+                document.getElementById('btnModalAcao').textContent = 'CADASTRAR';
+                document.getElementById('btnModalAlternar').textContent = 'Voltar para login';
+                document.getElementById('camposCadastro').style.display = 'block';
+                document.getElementById('camposCadastro2').style.display = 'block';
+            }
+            
+            document.getElementById('modalLogin').style.display = 'flex';
+        }
+        
+        function fecharModal() {
+            document.getElementById('modalLogin').style.display = 'none';
+            document.getElementById('modalErro').style.display = 'none';
+        }
+        
+        function alternarModo() {
+            if (modo === 'login') {
+                abrirModal('cadastro');
+            } else {
+                abrirModal('login');
+            }
+        }
+        
+        async function fazerLogin() {
+            const email = document.getElementById('modalEmail').value;
+            const senha = document.getElementById('modalSenha').value;
+            
+            document.getElementById('modalErro').style.display = 'none';
+            
+            if (modo === 'login') {
+                // MODO LOGIN
+                try {
+                    const { data, error } = await supabase
+                        .from('usuarios')
+                        .select('*')
+                        .eq('email', email)
+                        .eq('senha', senha);
+                    
+                    if (error) throw error;
+                    
+                    if (data && data.length > 0) {
+                        usuarioLogado = data[0];
+                        localStorage.setItem('usuario_logado', JSON.stringify(usuarioLogado));
+                        fecharModal();
+                        mostrarUsuarioLogado();
+                    } else {
+                        document.getElementById('modalErro').textContent = 'Email ou senha incorretos!';
+                        document.getElementById('modalErro').style.display = 'block';
+                    }
+                } catch (err) {
+                    document.getElementById('modalErro').textContent = 'Erro: ' + err.message;
+                    document.getElementById('modalErro').style.display = 'block';
+                }
+            } else {
+                // MODO CADASTRO
+                const nome = document.getElementById('modalNome').value;
+                const whatsapp = document.getElementById('modalWhatsapp').value;
+                const termos = document.getElementById('termos').checked;
                 
+                if (!nome || !email || !senha || !whatsapp) {
+                    document.getElementById('modalErro').textContent = 'Preencha todos os campos!';
+                    document.getElementById('modalErro').style.display = 'block';
+                    return;
+                }
+                
+                if (!termos) {
+                    document.getElementById('modalErro').textContent = 'Você precisa aceitar os termos!';
+                    document.getElementById('modalErro').style.display = 'block';
+                    return;
+                }
+                
+                try {
+                    // Verifica se email já existe
+                    const { data: existente } = await supabase
+                        .from('usuarios')
+                        .select('email')
+                        .eq('email', email);
+                    
+                    if (existente && existente.length > 0) {
+                        document.getElementById('modalErro').textContent = 'Este email já está cadastrado!';
+                        document.getElementById('modalErro').style.display = 'block';
+                        return;
+                    }
+                    
+                    // Insere novo usuário
+                    const { data, error } = await supabase
+                        .from('usuarios')
+                        .insert([{
+                            nome: nome,
+                            email: email,
+                            senha: senha,
+                            whatsapp: whatsapp,
+                            saldo: 100 // Bônus de cadastro
+                        }])
+                        .select();
+                    
+                    if (error) throw error;
+                    
+                    if (data && data.length > 0) {
+                        usuarioLogado = data[0];
+                        localStorage.setItem('usuario_logado', JSON.stringify(usuarioLogado));
+                        fecharModal();
+                        mostrarUsuarioLogado();
+                    }
+                } catch (err) {
+                    document.getElementById('modalErro').textContent = 'Erro: ' + err.message;
+                    document.getElementById('modalErro').style.display = 'block';
+                }
+            }
+        }
+        
+        function depositar() {
+            alert('💰 Sistema de depósito em desenvolvimento!');
+        }
+        
+        function mostrarPerfil() {
+            alert(`👤 ${usuarioLogado.nome}\n📧 ${usuarioLogado.email}\n📱 ${usuarioLogado.whatsapp}\n💰 R$ ${usuarioLogado.saldo.toFixed(2)}`);
+        }
+        
+        // Fechar modal clicando fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalLogin');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
