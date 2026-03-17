@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slots - Minha Bet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .balance-box {
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,215,0,0.3);
+        }
+
+        .balance-box span {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .btn-sair {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-sair:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .game-container {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .game-header h1 {
+            font-size: 48px;
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        /* Máquina Caça-Níqueis */
+        .slot-machine {
+            background: linear-gradient(135deg, #2a2a4a, #1a1a3a);
+            border-radius: 30px;
+            padding: 30px;
+            border: 3px solid #ffd700;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+        }
+
+        .reels-container {
+            display: flex;
+            gap: 10px;
+            background: #0a0a1a;
+            padding: 20px;
+            border-radius: 20px;
+            border: 2px solid #ffd700;
+        }
+
+        .reel {
+            flex: 1;
+            background: #1a1a2e;
+            border-radius: 15px;
+            padding: 10px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .reel-items {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .slot-item {
+            font-size: 48px;
+            text-align: center;
+            padding: 10px;
+            background: rgba(255,215,0,0.1);
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .slot-item.win {
+            background: rgba(255,215,0,0.3);
+            box-shadow: 0 0 20px #ffd700;
+            transform: scale(1.1);
+        }
+
+        /* Linha de premiação */
+        .win-line {
+            position: relative;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #ffd700, transparent);
+            margin: -30px 0 30px 0;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .win-line.active {
+            opacity: 1;
+        }
+
+        /* Controles */
+        .controls {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255,215,0,0.3);
+        }
+
+        .bet-control {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .bet-control label {
+            color: #888;
+            min-width: 80px;
+        }
+
+        .bet-input {
+            flex: 1;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,215,0,0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 18px;
+        }
+
+        .bet-input:focus {
+            outline: none;
+            border-color: #ffd700;
+        }
+
+        .btn-spin {
+            width: 100%;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(255,215,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        .btn-spin:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(255,215,0,0.4);
+        }
+
+        .btn-spin:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status {
+            text-align: center;
+            color: #888;
+            margin: 20px 0;
+        }
+
+        /* Tabela de prêmios */
+        .prize-table {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 30px;
+            border: 1px solid rgba(255,215,0,0.3);
+        }
+
+        .prize-table h3 {
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
+
+        .prize-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .prize-item {
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .prize-symbol {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .prize-mult {
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .back-link a {
+            color: #888;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .back-link a:hover {
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">⚡ MINHA BET</div>
+        <div class="balance-box">
+            <i class="fas fa-coins" style="color: #ffd700;"></i>
+            <span id="saldoDisplay">R$ 1.000,00</span>
+        </div>
+        <button class="btn-sair" onclick="window.location.href='dashboard.html'">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </button>
+    </div>
+
+    <div class="game-container">
+        <div class="game-header">
+            <h1><i class="fas fa-dice"></i> SLOTS</h1>
+        </div>
+
+        <div class="slot-machine">
+            <div class="reels-container" id="reels">
+                <div class="reel">
+                    <div class="reel-items" id="reel1">
+                        <div class="slot-item">🍒</div>
+                        <div class="slot-item">🍒</div>
+                        <div class="slot-item">🍒</div>
+                    </div>
+                </div>
+                <div class="reel">
+                    <div class="reel-items" id="reel2">
+                        <div class="slot-item">🍒</div>
+                        <div class="slot-item">🍒</div>
+                        <div class="slot-item">🍒</div>
+                    </div>
+                </div>
+                <div class="reel">
+                    <div class="reel-items" id="reel3">
+                        <div class="slot-item">🍒</div>
+                        <div class="slot-item">🍒</div>
+                        <div class="slot-item">🍒</div>
+                    </div>
+                </div>
+            </div>
+            <div class="win-line" id="winLine"></div>
+        </div>
+
+        <div class="controls">
+            <div class="bet-control">
+                <label><i class="fas fa-coins"></i> Aposta:</label>
+                <input type="number" class="bet-input" id="betAmount" value="10" min="1" max="10000" step="1">
+            </div>
+
+            <button class="btn-spin" id="btnSpin" onclick="girar()">
+                <i class="fas fa-sync-alt"></i> GIRAR
+            </button>
+
+            <div class="status" id="status">
+                👆 Clique em GIRAR para começar
+            </div>
+        </div>
+
+        <div class="prize-table">
+            <h3><i class="fas fa-trophy"></i> Tabela de Prêmios</h3>
+            <div class="prize-grid">
+                <div class="prize-item">
+                    <div class="prize-symbol">7️⃣ 7️⃣ 7️⃣</div>
+                    <div class="prize-mult">50x</div>
+                </div>
+                <div class="prize-item">
+                    <div class="prize-symbol">💎 💎 💎</div>
+                    <div class="prize-mult">20x</div>
+                </div>
+                <div class="prize-item">
+                    <div class="prize-symbol">🍒 🍒 🍒</div>
+                    <div class="prize-mult">10x</div>
+                </div>
+                <div class="prize-item">
+                    <div class="prize-symbol">🍋 🍋 🍋</div>
+                    <div class="prize-mult">5x</div>
+                </div>
+                <div class="prize-item">
+                    <div class="prize-symbol">⭐ ⭐ ⭐</div>
+                    <div class="prize-mult">3x</div>
+                </div>
+                <div class="prize-item">
+                    <div class="prize-symbol">🍊 🍊 🍊</div>
+                    <div class="prize-mult">2x</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="back-link">
+            <a href="dashboard.html"><i class="fas fa-arrow-left"></i> Voltar para o Dashboard</a>
+        </div>
+    </div>
+
+    <script>
+        // Elementos
+        const saldoDisplay = document.getElementById('saldoDisplay');
+        const betInput = document.getElementById('betAmount');
+        const btnSpin = document.getElementById('btnSpin');
+        const statusEl = document.getElementById('status');
+        const winLine = document.getElementById('winLine');
+
+        // Reels
+        const reel1 = document.getElementById('reel1');
+        const reel2 = document.getElementById('reel2');
+        const reel3 = document.getElementById('reel3');
+
+        // Símbolos possíveis
+        const symbols = ['🍒', '🍋', '🍊', '⭐', '💎', '7️⃣'];
+        
+        // Multiplicadores
+        const multipliers = {
+            '7️⃣': 50,
+            '💎': 20,
+            '🍒': 10,
+            '🍋': 5,
+            '⭐': 3,
+            '🍊': 2
+        };
+
+        let saldo = 1000;
+        let jogando = false;
+
+        function atualizarSaldo() {
+            saldoDisplay.innerHTML = `R$ ${saldo.toFixed(2).replace('.', ',')}`;
+        }
+
+        function getRandomSymbol() {
+            return symbols[Math.floor(Math.random() * symbols.length)];
+        }
+
+        function criarReelItems(reel, symbols) {
+            reel.innerHTML = '';
+            symbols.forEach(s => {
+                const div = document.createElement('div');
+                div.className = 'slot-item';
+                div.textContent = s;
+                reel.appendChild(div);
+            });
+        }
+
+        function animarReel(reel, callback) {
+            let count = 0;
+            const interval = setInterval(() => {
+                const randomSymbols = [
+                    getRandomSymbol(),
+                    getRandomSymbol(),
+                    getRandomSymbol()
+                ];
+                criarReelItems(reel, randomSymbols);
+                
+                count++;
+                if (count >= 10) {
+                    clearInterval(interval);
+                    callback();
+                }
+            }, 50);
+        }
+
+        function verificarPremio(s1, s2, s3) {
+            if (s1 === s2 && s2 === s3) {
+                return multipliers[s1] || 1;
+            }
+            return 0;
+        }
+
+        function destacarVencedores(s1, s2, s3) {
+            const items = document.querySelectorAll('.slot-item');
+            items.forEach(item => item.classList.remove('win'));
+            
+            if (s1 === s2 && s2 === s3) {
+                winLine.classList.add('active');
+                setTimeout(() => {
+                    const reels = [reel1, reel2, reel3];
+                    reels.forEach((reel, index) => {
+                        const items = reel.children;
+                        for (let i = 0; i < items.length; i++) {
+                            items[i].classList.add('win');
+                        }
+                    });
+                }, 500);
+            } else {
+                winLine.classList.remove('active');
+            }
+        }
+
+        function girar() {
+            if (jogando) return;
+
+            let valor = parseFloat(betInput.value);
+            
+            if (valor <= 0 || valor > saldo) {
+                alert('Valor inválido ou saldo insuficiente!');
+                return;
+            }
+
+            jogando = true;
+            btnSpin.disabled = true;
+            saldo -= valor;
+            atualizarSaldo();
+            statusEl.innerHTML = '🎰 Girando...';
+            winLine.classList.remove('active');
+
+            // Animar cada reel
+            let reelsCompletos = 0;
+            
+            const animarReelCompleto = (reel, index) => {
+                animarReel(reel, () => {
+                    reelsCompletos++;
+                    if (reelsCompletos === 3) {
+                        // Todos os reels pararam
+                        const s1 = reel1.children[1].textContent;
+                        const s2 = reel2.children[1].textContent;
+                        const s3 = reel3.children[1].textContent;
+                        
+                        const premio = verificarPremio(s1, s2, s3);
+                        
+                        if (premio > 0) {
+                            let ganho = valor * premio;
+                            saldo += ganho;
+                            atualizarSaldo();
+                            statusEl.innerHTML = `🎉 GANHOU! ${premio}x - R$ ${ganho.toFixed(2)}`;
+                            destacarVencedores(s1, s2, s3);
+                        } else {
+                            statusEl.innerHTML = '😢 Tente novamente!';
+                        }
+                        
+                        jogando = false;
+                        btnSpin.disabled = false;
+                    }
+                });
+            };
+
+            animarReelCompleto(reel1, 1);
+            animarReelCompleto(reel2, 2);
+            animarReelCompleto(reel3, 3);
+        }
+
+        // Inicializar com símbolos aleatórios
+        criarReelItems(reel1, [getRandomSymbol(), getRandomSymbol(), getRandomSymbol()]);
+        criarReelItems(reel2, [getRandomSymbol(), getRandomSymbol(), getRandomSymbol()]);
+        criarReelItems(reel3, [getRandomSymbol(), getRandomSymbol(), getRandomSymbol()]);
+    </script>
+</body>
+</html>
