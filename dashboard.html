@@ -245,6 +245,9 @@
             position: relative;
             overflow: hidden;
             border: 1px solid rgba(255,255,255,0.2);
+            text-decoration: none;
+            color: inherit;
+            display: block;
         }
 
         .game-card:hover {
@@ -692,18 +695,36 @@
     </div>
 
     <div class="games-grid">
-        <div class="game-card">
-            <span class="game-badge">🔥 POPULAR</span>
-            <div class="game-icon">📈</div>
-            <h3>Crash</h3>
-            <p>Multiplique seus ganhos até 100x</p>
-            <div class="game-footer">
-                <span class="game-odds"><i class="fas fa-chart-line"></i> RTP 97%</span>
-                <span class="game-play">Jogar <i class="fas fa-arrow-right"></i></span>
+        <!-- Crash Game -->
+        <a href="crash.html" style="text-decoration: none;">
+            <div class="game-card">
+                <span class="game-badge">🔥 POPULAR</span>
+                <div class="game-icon">📈</div>
+                <h3>Crash</h3>
+                <p>Multiplique seus ganhos até 100x</p>
+                <div class="game-footer">
+                    <span class="game-odds"><i class="fas fa-chart-line"></i> RTP 97%</span>
+                    <span class="game-play">Jogar <i class="fas fa-arrow-right"></i></span>
+                </div>
             </div>
-        </div>
+        </a>
 
-        <div class="game-card">
+        <!-- Slots Game -->
+        <a href="slots.html" style="text-decoration: none;">
+            <div class="game-card">
+                <span class="game-badge">💰 JACKPOT</span>
+                <div class="game-icon">🎰</div>
+                <h3>Slots</h3>
+                <p>Caça-níqueis com jackpot</p>
+                <div class="game-footer">
+                    <span class="game-odds"><i class="fas fa-chart-line"></i> RTP 98%</span>
+                    <span class="game-play">Jogar <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </div>
+        </a>
+
+        <!-- Mines Game (Em breve) -->
+        <div class="game-card" onclick="alert('Mines - Em breve!')">
             <span class="game-badge">✨ NOVO</span>
             <div class="game-icon">💣</div>
             <h3>Mines</h3>
@@ -714,18 +735,8 @@
             </div>
         </div>
 
-        <div class="game-card">
-            <span class="game-badge">💰 JACKPOT</span>
-            <div class="game-icon">🎰</div>
-            <h3>Slots</h3>
-            <p>Caça-níqueis com jackpot</p>
-            <div class="game-footer">
-                <span class="game-odds"><i class="fas fa-chart-line"></i> RTP 98%</span>
-                <span class="game-play">Jogar <i class="fas fa-arrow-right"></i></span>
-            </div>
-        </div>
-
-        <div class="game-card">
+        <!-- Roleta (Em breve) -->
+        <div class="game-card" onclick="alert('Roleta - Em breve!')">
             <span class="game-badge">🎯 AO VIVO</span>
             <div class="game-icon">🎲</div>
             <h3>Roleta</h3>
@@ -835,10 +846,10 @@
             </div>
             <div class="footer-col">
                 <h4>Jogos</h4>
-                <a href="#"><i class="fas fa-chevron-right"></i> Crash</a>
-                <a href="#"><i class="fas fa-chevron-right"></i> Mines</a>
-                <a href="#"><i class="fas fa-chevron-right"></i> Slots</a>
-                <a href="#"><i class="fas fa-chevron-right"></i> Roleta</a>
+                <a href="crash.html"><i class="fas fa-chevron-right"></i> Crash</a>
+                <a href="slots.html"><i class="fas fa-chevron-right"></i> Slots</a>
+                <a href="#"><i class="fas fa-chevron-right"></i> Mines (Em breve)</a>
+                <a href="#"><i class="fas fa-chevron-right"></i> Roleta (Em breve)</a>
             </div>
             <div class="footer-col">
                 <h4>Redes Sociais</h4>
