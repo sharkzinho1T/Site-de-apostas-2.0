@@ -71,6 +71,7 @@
         .user-actions {
             display: flex;
             gap: 15px;
+            align-items: center;
         }
 
         .btn-outline {
@@ -106,6 +107,52 @@
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Área do usuário logado */
+        .user-logged {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .balance-box {
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,215,0,0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .balance-box:hover {
+            background: rgba(255,215,0,0.2);
+        }
+
+        .balance-box span {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .hidden {
+            display: none !important;
         }
 
         /* Hero Section */
@@ -400,7 +447,7 @@
             color: #667eea;
         }
 
-        /* Modal de Cadastro */
+        /* ===== MODAL DE LOGIN/CADASTRO ===== (já existente) */
         .modal {
             display: none;
             position: fixed;
@@ -495,7 +542,7 @@
             font-size: 14px;
         }
 
-        .input-group input {
+        .input-group input, .input-group select {
             width: 100%;
             padding: 15px;
             border: 2px solid #e2e8f0;
@@ -504,33 +551,10 @@
             transition: all 0.3s;
         }
 
-        .input-group input:focus {
+        .input-group input:focus, .input-group select:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 20px 0;
-        }
-
-        .checkbox-group input {
-            width: 18px;
-            height: 18px;
-        }
-
-        .checkbox-group label {
-            color: #718096;
-            font-size: 14px;
-        }
-
-        .checkbox-group a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
         }
 
         .btn-modal {
@@ -566,6 +590,66 @@
 
         .modal-footer a:hover {
             text-decoration: underline;
+        }
+
+        /* Modal de Depósito */
+        .deposit-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .deposit-option {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .deposit-option:hover {
+            border-color: #667eea;
+            background: #edf2f7;
+            transform: scale(1.05);
+        }
+
+        .deposit-option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+        }
+
+        .deposit-option .valor {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .deposit-option .ganho {
+            font-size: 14px;
+            color: #48bb78;
+            font-weight: 600;
+        }
+
+        .deposit-custom {
+            margin: 20px 0;
+        }
+
+        .info-conversao {
+            background: #f0f9ff;
+            border-left: 4px solid #667eea;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .info-conversao i {
+            color: #ffd700;
+            margin-right: 5px;
         }
 
         /* Footer */
@@ -656,9 +740,20 @@
             <a href="#">Cassino</a>
             <a href="#">Promoções</a>
         </div>
-        <div class="user-actions">
-            <button class="btn-outline" onclick="abrirModal('login')">Entrar</button>
-            <button class="btn-primary" onclick="abrirModal('cadastro')">Cadastrar</button>
+        <div class="user-actions" id="userActions">
+            <!-- Deslogado -->
+            <div id="deslogadoView">
+                <button class="btn-outline" onclick="abrirModal('login')">Entrar</button>
+                <button class="btn-primary" onclick="abrirModal('cadastro')">Cadastrar</button>
+            </div>
+            <!-- Logado (inicialmente oculto) -->
+            <div id="logadoView" class="user-logged hidden">
+                <div class="balance-box" onclick="abrirModalDeposito()">
+                    <i class="fas fa-coins" style="color: #ffd700;"></i>
+                    <span id="saldoDisplay">R$ 0,00</span>
+                </div>
+                <div class="user-avatar" id="userAvatar" onclick="mostrarPerfil()">👤</div>
+            </div>
         </div>
     </div>
 
@@ -777,54 +872,116 @@
         </div>
     </div>
 
-    <!-- Modal de Cadastro/Login -->
+    <!-- Modal de Login/Cadastro (já existente) -->
     <div class="modal" id="modalLogin">
         <div class="modal-content">
-            <button class="modal-close" onclick="fecharModal()"><i class="fas fa-times"></i></button>
-            
+            <button class="modal-close" onclick="fecharModal('modalLogin')"><i class="fas fa-times"></i></button>
             <div class="modal-header">
                 <div class="modal-icon" id="modalIcon">🔐</div>
                 <h2 id="modalTitle">Bem-vindo de volta!</h2>
                 <p id="modalSubtitle">Acesse sua conta para continuar</p>
             </div>
-
             <div id="modalError" style="color: #dc2626; text-align: center; margin-bottom: 20px; display: none;"></div>
-
-            <!-- Campos do cadastro (ocultos inicialmente) -->
             <div id="cadastroFields" style="display: none;">
                 <div class="input-group">
                     <label><i class="fas fa-user"></i> Nome completo</label>
                     <input type="text" id="nomeCadastro" placeholder="Digite seu nome">
                 </div>
             </div>
-
             <div class="input-group">
                 <label><i class="fas fa-envelope"></i> E-mail</label>
                 <input type="email" id="email" placeholder="seu@email.com">
             </div>
-
             <div class="input-group">
                 <label><i class="fas fa-lock"></i> Senha</label>
                 <input type="password" id="senha" placeholder="••••••••">
             </div>
-
-            <!-- Campos extras do cadastro -->
             <div id="cadastroExtraFields" style="display: none;">
                 <div class="input-group">
                     <label><i class="fab fa-whatsapp"></i> WhatsApp</label>
                     <input type="text" id="whatsapp" placeholder="(11) 99999-9999">
                 </div>
-
-                <div class="checkbox-group">
+                <div class="checkbox-group" style="display: flex; align-items: center; gap: 10px; margin: 20px 0;">
                     <input type="checkbox" id="termos">
                     <label for="termos">Concordo com os <a href="#">Termos de Uso</a> e <a href="#">Política de Privacidade</a></label>
                 </div>
             </div>
-
             <button class="btn-modal" id="btnAcao" onclick="processarForm()">ENTRAR</button>
-
             <div class="modal-footer">
                 <a href="#" id="toggleLink" onclick="toggleModo()">Não tem conta? Cadastre-se</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Depósito -->
+    <div class="modal" id="modalDeposito">
+        <div class="modal-content">
+            <button class="modal-close" onclick="fecharModal('modalDeposito')"><i class="fas fa-times"></i></button>
+            <div class="modal-header">
+                <div class="modal-icon">💰</div>
+                <h2>Adicionar Saldo</h2>
+                <p>Escolha o valor que deseja depositar</p>
+            </div>
+
+            <div class="info-conversao">
+                <i class="fas fa-info-circle"></i> A cada R$10,00 você ganha <strong>100 de saldo</strong> (10x)
+            </div>
+
+            <div class="deposit-options" id="depositOptions">
+                <div class="deposit-option" data-reais="10" data-saldo="100">
+                    <div class="valor">R$ 10</div>
+                    <div class="ganho">+100 saldo</div>
+                </div>
+                <div class="deposit-option" data-reais="20" data-saldo="200">
+                    <div class="valor">R$ 20</div>
+                    <div class="ganho">+200 saldo</div>
+                </div>
+                <div class="deposit-option" data-reais="50" data-saldo="500">
+                    <div class="valor">R$ 50</div>
+                    <div class="ganho">+500 saldo</div>
+                </div>
+                <div class="deposit-option" data-reais="100" data-saldo="1000">
+                    <div class="valor">R$ 100</div>
+                    <div class="ganho">+1000 saldo</div>
+                </div>
+            </div>
+
+            <div class="deposit-custom">
+                <div class="input-group">
+                    <label>Ou digite um valor personalizado (R$):</label>
+                    <input type="number" id="customReais" placeholder="Ex: 15" min="1" step="1">
+                </div>
+            </div>
+
+            <button class="btn-modal" id="btnDepositar" onclick="processarDeposito()">CONTINUAR PARA PAGAMENTO</button>
+
+            <div class="modal-footer">
+                <a href="#" onclick="fecharModal('modalDeposito')">Cancelar</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Pagamento (simulação) -->
+    <div class="modal" id="modalPagamento">
+        <div class="modal-content">
+            <button class="modal-close" onclick="fecharModal('modalPagamento')"><i class="fas fa-times"></i></button>
+            <div class="modal-header">
+                <div class="modal-icon">💳</div>
+                <h2>Pagamento</h2>
+                <p id="pagamentoInfo">Valor a pagar: R$ <span id="valorPagar">0</span></p>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0;">
+                <div style="font-size: 48px; color: #667eea; margin-bottom: 20px;">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <p style="color: #718096;">Simulação de pagamento</p>
+                <p style="font-weight: bold; margin: 20px 0;">Você ganhará <span id="saldoGanho" style="color: #48bb78;">0</span> de saldo</p>
+            </div>
+
+            <button class="btn-modal" onclick="confirmarPagamento()">CONFIRMAR PAGAMENTO</button>
+            <div class="modal-footer">
+                <a href="#" onclick="fecharModal('modalPagamento')">Cancelar</a>
             </div>
         </div>
     </div>
@@ -867,11 +1024,42 @@
     </div>
 
     <script>
-        let modoAtual = 'login';
+        // ========== CONFIGURAÇÃO SUPABASE (COLE SUAS CREDENCIAIS AQUI) ==========
+        const SUPABASE_URL = 'https://SEU_ID_AQUI.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // =========================================================================
 
+        // Estado da aplicação
+        let modoAtual = 'login'; // 'login' ou 'cadastro'
+        let usuarioLogado = JSON.parse(localStorage.getItem('usuario_logado')) || null;
+        let valorDepositoSelecionado = { reais: 0, saldo: 0 };
+
+        // Inicialização
+        if (usuarioLogado) {
+            mostrarUsuarioLogado();
+        }
+
+        // Funções de usuário
+        function mostrarUsuarioLogado() {
+            document.getElementById('deslogadoView').classList.add('hidden');
+            document.getElementById('logadoView').classList.remove('hidden');
+            document.getElementById('saldoDisplay').innerHTML = `R$ ${usuarioLogado.saldo.toFixed(2).replace('.', ',')}`;
+            
+            const avatar = document.getElementById('userAvatar');
+            if (usuarioLogado.nome) {
+                avatar.textContent = usuarioLogado.nome.charAt(0).toUpperCase();
+            }
+        }
+
+        function atualizarSaldoDisplay() {
+            document.getElementById('saldoDisplay').innerHTML = `R$ ${usuarioLogado.saldo.toFixed(2).replace('.', ',')}`;
+        }
+
+        // Modal de login/cadastro
         function abrirModal(tipo) {
             modoAtual = tipo;
-            
+            const modal = document.getElementById('modalLogin');
             if (tipo === 'login') {
                 document.getElementById('modalIcon').innerHTML = '🔐';
                 document.getElementById('modalTitle').innerHTML = 'Bem-vindo de volta!';
@@ -889,12 +1077,11 @@
                 document.getElementById('cadastroFields').style.display = 'block';
                 document.getElementById('cadastroExtraFields').style.display = 'block';
             }
-            
-            document.getElementById('modalLogin').style.display = 'flex';
+            modal.style.display = 'flex';
         }
 
-        function fecharModal() {
-            document.getElementById('modalLogin').style.display = 'none';
+        function fecharModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
         }
 
         function toggleModo() {
@@ -905,21 +1092,127 @@
             }
         }
 
-        function processarForm() {
+        // Processar login/cadastro (simulação)
+        async function processarForm() {
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            document.getElementById('modalError').style.display = 'none';
+
             if (modoAtual === 'login') {
-                alert('🔐 Login realizado com sucesso! (Simulação)');
-                fecharModal();
+                // Simulação de login (substituir por consulta ao Supabase)
+                // Por enquanto, cria um usuário fictício se não existir
+                if (!usuarioLogado) {
+                    usuarioLogado = {
+                        id: 1,
+                        nome: 'Usuário Teste',
+                        email: email,
+                        saldo: 1000,
+                        whatsapp: '(11) 99999-9999'
+                    };
+                    localStorage.setItem('usuario_logado', JSON.stringify(usuarioLogado));
+                }
+                fecharModal('modalLogin');
+                mostrarUsuarioLogado();
             } else {
-                alert('📝 Cadastro realizado com sucesso! Ganhe R$100 de bônus!');
-                fecharModal();
+                // Modo cadastro
+                const nome = document.getElementById('nomeCadastro').value;
+                const whatsapp = document.getElementById('whatsapp').value;
+                const termos = document.getElementById('termos').checked;
+
+                if (!nome || !email || !senha || !whatsapp) {
+                    document.getElementById('modalError').textContent = 'Preencha todos os campos!';
+                    document.getElementById('modalError').style.display = 'block';
+                    return;
+                }
+                if (!termos) {
+                    document.getElementById('modalError').textContent = 'Você deve aceitar os termos!';
+                    document.getElementById('modalError').style.display = 'block';
+                    return;
+                }
+
+                // Simulação de cadastro
+                usuarioLogado = {
+                    id: Date.now(),
+                    nome: nome,
+                    email: email,
+                    saldo: 100, // Bônus de cadastro
+                    whatsapp: whatsapp
+                };
+                localStorage.setItem('usuario_logado', JSON.stringify(usuarioLogado));
+                fecharModal('modalLogin');
+                mostrarUsuarioLogado();
             }
         }
 
-        // Fechar modal ao clicar fora
+        // Modal de depósito
+        function abrirModalDeposito() {
+            if (!usuarioLogado) {
+                alert('Faça login primeiro!');
+                return;
+            }
+            // Limpar seleção anterior
+            document.querySelectorAll('.deposit-option').forEach(opt => opt.classList.remove('selected'));
+            document.getElementById('customReais').value = '';
+            valorDepositoSelecionado = { reais: 0, saldo: 0 };
+            document.getElementById('modalDeposito').style.display = 'flex';
+        }
+
+        // Selecionar opção de depósito
+        document.querySelectorAll('.deposit-option').forEach(opt => {
+            opt.addEventListener('click', function() {
+                document.querySelectorAll('.deposit-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                const reais = parseFloat(this.dataset.reais);
+                const saldo = parseFloat(this.dataset.saldo);
+                valorDepositoSelecionado = { reais, saldo };
+                document.getElementById('customReais').value = ''; // limpa custom
+            });
+        });
+
+        // Processar depósito (abrir modal de pagamento)
+        function processarDeposito() {
+            let reais = valorDepositoSelecionado.reais;
+            if (reais === 0) {
+                // Tentar valor customizado
+                const custom = parseFloat(document.getElementById('customReais').value);
+                if (custom && custom > 0) {
+                    reais = custom;
+                    valorDepositoSelecionado = { reais: custom, saldo: custom * 10 };
+                } else {
+                    alert('Selecione um valor ou digite um valor personalizado.');
+                    return;
+                }
+            }
+
+            document.getElementById('valorPagar').textContent = reais.toFixed(2);
+            document.getElementById('saldoGanho').textContent = valorDepositoSelecionado.saldo;
+            fecharModal('modalDeposito');
+            document.getElementById('modalPagamento').style.display = 'flex';
+        }
+
+        // Confirmar pagamento (simulação)
+        function confirmarPagamento() {
+            // Adiciona saldo ao usuário
+            if (usuarioLogado) {
+                usuarioLogado.saldo += valorDepositoSelecionado.saldo;
+                localStorage.setItem('usuario_logado', JSON.stringify(usuarioLogado));
+                atualizarSaldoDisplay();
+                alert(`✅ Pagamento confirmado! Você adicionou R$ ${valorDepositoSelecionado.saldo.toFixed(2)} de saldo.`);
+            }
+            fecharModal('modalPagamento');
+        }
+
+        // Perfil
+        function mostrarPerfil() {
+            if (usuarioLogado) {
+                alert(`👤 ${usuarioLogado.nome}\n📧 ${usuarioLogado.email}\n📱 ${usuarioLogado.whatsapp}\n💰 Saldo: R$ ${usuarioLogado.saldo.toFixed(2)}`);
+            }
+        }
+
+        // Fechar modais clicando fora
         window.onclick = function(event) {
-            const modal = document.getElementById('modalLogin');
-            if (event.target === modal) {
-                modal.style.display = 'none';
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
             }
         }
     </script>
