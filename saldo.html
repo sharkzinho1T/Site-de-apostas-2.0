@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Bet - Adicionar Saldo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-voltar {
+            background: #f1f5f9;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: #4a5568;
+        }
+
+        .btn-voltar:hover {
+            background: #e2e8f0;
+            transform: scale(1.1);
+        }
+
+        .saldo-atual {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px;
+            padding: 25px;
+            color: white;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .saldo-atual-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .saldo-atual-valor {
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .info-conversao {
+            background: #f0f9ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .info-conversao i {
+            color: #ffd700;
+            margin-right: 5px;
+        }
+
+        .opcoes-titulo {
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .opcoes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .opcao {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .opcao:hover {
+            border-color: #667eea;
+            background: #edf2f7;
+            transform: translateY(-2px);
+        }
+
+        .opcao.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .opcao .valor-real {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .opcao .valor-saldo {
+            font-size: 14px;
+            color: #48bb78;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .custom-section {
+            margin-bottom: 25px;
+        }
+
+        .custom-section label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .custom-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .custom-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-depositar {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 20px 0;
+        }
+
+        .btn-depositar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .erro {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            display: none;
+        }
+
+        .sucesso {
+            background: #f0fdf4;
+            color: #2e7d32;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            border: 2px solid #4caf50;
+            display: none;
+        }
+
+        .sucesso i {
+            font-size: 48px;
+            color: #4caf50;
+            margin-bottom: 10px;
+        }
+
+        /* Modal de Pagamento */
+        .modal-pagamento {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 30px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .modal-icon {
+            font-size: 60px;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .modal-content h2 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .modal-content p {
+            color: #718096;
+            margin-bottom: 20px;
+        }
+
+        .modal-valor {
+            font-size: 36px;
+            font-weight: 700;
+            color: #48bb78;
+            margin: 20px 0;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-confirmar {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+        }
+
+        .btn-confirmar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(72, 187, 120, 0.3);
+        }
+
+        .btn-cancelar {
+            background: #f1f5f9;
+            color: #4a5568;
+        }
+
+        .btn-cancelar:hover {
+            background: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-coins" style="color: #ffd700;"></i> Adicionar Saldo</h1>
+            <a href="dashboard.html" class="btn-voltar">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+        </div>
+
+        <!-- Saldo atual (simulado) -->
+        <div class="saldo-atual">
+            <div class="saldo-atual-label">Seu saldo atual</div>
+            <div class="saldo-atual-valor" id="saldoAtual">R$ 1.000,00</div>
+        </div>
+
+        <!-- Info conversão -->
+        <div class="info-conversao">
+            <i class="fas fa-info-circle"></i> A cada R$10,00 você ganha <strong>100 de saldo</strong> (10x)
+        </div>
+
+        <!-- Mensagem de erro -->
+        <div id="erro" class="erro"></div>
+
+        <!-- Mensagem de sucesso -->
+        <div id="sucesso" class="sucesso">
+            <i class="fas fa-check-circle"></i>
+            <h3>Pagamento Confirmado!</h3>
+            <p id="sucessoMensagem"></p>
+            <button onclick="window.location.href='dashboard.html'" style="margin-top: 15px; padding: 10px 20px; background: #4caf50; color: white; border: none; border-radius: 10px; cursor: pointer;">
+                Voltar ao Dashboard
+            </button>
+        </div>
+
+        <!-- Opções pré-definidas -->
+        <h3 class="opcoes-titulo">Escolha um valor:</h3>
+        <div class="opcoes-grid" id="opcoes">
+            <div class="opcao" data-reais="10" data-saldo="100">
+                <div class="valor-real">R$ 10</div>
+                <div class="valor-saldo">+100 saldo</div>
+            </div>
+            <div class="opcao" data-reais="20" data-saldo="200">
+                <div class="valor-real">R$ 20</div>
+                <div class="valor-saldo">+200 saldo</div>
+            </div>
+            <div class="opcao" data-reais="50" data-saldo="500">
+                <div class="valor-real">R$ 50</div>
+                <div class="valor-saldo">+500 saldo</div>
+            </div>
+            <div class="opcao" data-reais="100" data-saldo="1000">
+                <div class="valor-real">R$ 100</div>
+                <div class="valor-saldo">+1000 saldo</div>
+            </div>
+        </div>
+
+        <!-- Valor personalizado -->
+        <div class="custom-section">
+            <label>Ou digite um valor personalizado:</label>
+            <input type="number" class="custom-input" id="valorCustom" placeholder="Ex: 15" min="1" step="1">
+        </div>
+
+        <!-- Botão depositar -->
+        <button class="btn-depositar" id="btnDepositar" onclick="abrirPagamento()">
+            <i class="fas fa-arrow-right"></i> CONTINUAR PARA PAGAMENTO
+        </button>
+    </div>
+
+    <!-- Modal de Pagamento -->
+    <div class="modal-pagamento" id="modalPagamento">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-qrcode"></i>
+            </div>
+            <h2>Confirmar Pagamento</h2>
+            <p>Você está pagando:</p>
+            <div class="modal-valor" id="modalValorPagar">R$ 0,00</div>
+            <p>E receberá <strong id="modalSaldoGanho">0</strong> de saldo</p>
+            
+            <div class="modal-buttons">
+                <button class="modal-btn btn-cancelar" onclick="fecharModal()">Cancelar</button>
+                <button class="modal-btn btn-confirmar" onclick="confirmarPagamento()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Estado da aplicação
+        let valorSelecionado = { reais: 0, saldo: 0 };
+        let saldoAtual = 1000; // Saldo inicial para demonstração
+
+        // Atualizar saldo na tela
+        function atualizarSaldoDisplay() {
+            document.getElementById('saldoAtual').innerHTML = `R$ ${saldoAtual.toFixed(2).replace('.', ',')}`;
+        }
+
+        // Selecionar opção de depósito
+        document.querySelectorAll('.opcao').forEach(opt => {
+            opt.addEventListener('click', function() {
+                document.querySelectorAll('.opcao').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                const reais = parseFloat(this.dataset.reais);
+                const saldo = parseFloat(this.dataset.saldo);
+                valorSelecionado = { reais, saldo };
+                document.getElementById('valorCustom').value = '';
+                document.getElementById('erro').style.display = 'none';
+            });
+        });
+
+        // Abrir modal de pagamento
+        function abrirPagamento() {
+            let reais = valorSelecionado.reais;
+
+            // Se não escolheu opção pré-definida, pegar valor customizado
+            if (reais === 0) {
+                const custom = parseFloat(document.getElementById('valorCustom').value);
+                if (custom && custom > 0) {
+                    reais = custom;
+                    valorSelecionado = { reais: custom, saldo: custom * 10 };
+                } else {
+                    document.getElementById('erro').textContent = 'Selecione um valor ou digite um valor válido!';
+                    document.getElementById('erro').style.display = 'block';
+                    return;
+                }
+            }
+
+            // Mostrar modal
+            document.getElementById('modalValorPagar').innerHTML = `R$ ${reais.toFixed(2).replace('.', ',')}`;
+            document.getElementById('modalSaldoGanho').innerHTML = valorSelecionado.saldo;
+            document.getElementById('modalPagamento').style.display = 'flex';
+        }
+
+        // Fechar modal
+        function fecharModal() {
+            document.getElementById('modalPagamento').style.display = 'none';
+        }
+
+        // Confirmar pagamento (simulação)
+        function confirmarPagamento() {
+            // Adicionar saldo
+            saldoAtual += valorSelecionado.saldo;
+            
+            // Atualizar display
+            atualizarSaldoDisplay();
+
+            // Fechar modal
+            fecharModal();
+
+            // Esconder opções e mostrar mensagem de sucesso
+            document.getElementById('opcoes').style.display = 'none';
+            document.querySelector('.custom-section').style.display = 'none';
+            document.getElementById('btnDepositar').style.display = 'none';
+            document.querySelector('.info-conversao').style.display = 'none';
+            
+            document.getElementById('sucessoMensagem').innerHTML = `Você adicionou R$ ${valorSelecionado.saldo.toFixed(2).replace('.', ',')} de saldo!`;
+            document.getElementById('sucesso').style.display = 'block';
+        }
+
+        // Fechar modal clicando fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalPagamento');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Inicializar
+        atualizarSaldoDisplay();
+    </script>
+</body>
+</html>
