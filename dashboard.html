@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minha Bet - A Melhor Experiência em Apostas</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
             margin: 0;
@@ -117,7 +118,7 @@
         }
 
         .balance-box {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             padding: 10px 20px;
             border-radius: 50px;
             border: 1px solid rgba(255,215,0,0.3);
@@ -447,7 +448,7 @@
             color: #667eea;
         }
 
-        /* ===== MODAL DE LOGIN/CADASTRO ===== (já existente) */
+        /* ===== MODAL DE LOGIN/CADASTRO ===== */
         .modal {
             display: none;
             position: fixed;
@@ -555,6 +556,29 @@
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+        }
+
+        .checkbox-group label {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .checkbox-group a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
         }
 
         .btn-modal {
@@ -872,41 +896,52 @@
         </div>
     </div>
 
-    <!-- Modal de Login/Cadastro (já existente) -->
+    <!-- Modal de Login/Cadastro (CORRIGIDO) -->
     <div class="modal" id="modalLogin">
         <div class="modal-content">
             <button class="modal-close" onclick="fecharModal('modalLogin')"><i class="fas fa-times"></i></button>
+            
             <div class="modal-header">
                 <div class="modal-icon" id="modalIcon">🔐</div>
                 <h2 id="modalTitle">Bem-vindo de volta!</h2>
                 <p id="modalSubtitle">Acesse sua conta para continuar</p>
             </div>
+
             <div id="modalError" style="color: #dc2626; text-align: center; margin-bottom: 20px; display: none;"></div>
+
+            <!-- Campos do cadastro (ocultos inicialmente) -->
             <div id="cadastroFields" style="display: none;">
                 <div class="input-group">
                     <label><i class="fas fa-user"></i> Nome completo</label>
-                    <input type="text" id="nomeCadastro" placeholder="Digite seu nome">
+                    <input type="text" id="modalNome" placeholder="Digite seu nome">
                 </div>
             </div>
+
             <div class="input-group">
                 <label><i class="fas fa-envelope"></i> E-mail</label>
-                <input type="email" id="email" placeholder="seu@email.com">
+                <input type="email" id="modalEmail" placeholder="seu@email.com" value="admin@email.com">
             </div>
+
             <div class="input-group">
                 <label><i class="fas fa-lock"></i> Senha</label>
-                <input type="password" id="senha" placeholder="••••••••">
+                <input type="password" id="modalSenha" placeholder="••••••••" value="123456">
             </div>
+
+            <!-- Campos extras do cadastro -->
             <div id="cadastroExtraFields" style="display: none;">
                 <div class="input-group">
                     <label><i class="fab fa-whatsapp"></i> WhatsApp</label>
-                    <input type="text" id="whatsapp" placeholder="(11) 99999-9999">
+                    <input type="text" id="modalWhatsapp" placeholder="(11) 99999-9999">
                 </div>
-                <div class="checkbox-group" style="display: flex; align-items: center; gap: 10px; margin: 20px 0;">
+
+                <div class="checkbox-group">
                     <input type="checkbox" id="termos">
                     <label for="termos">Concordo com os <a href="#">Termos de Uso</a> e <a href="#">Política de Privacidade</a></label>
                 </div>
             </div>
+
             <button class="btn-modal" id="btnAcao" onclick="processarForm()">ENTRAR</button>
+
             <div class="modal-footer">
                 <a href="#" id="toggleLink" onclick="toggleModo()">Não tem conta? Cadastre-se</a>
             </div>
@@ -1024,14 +1059,16 @@
     </div>
 
     <script>
-        // ========== CONFIGURAÇÃO SUPABASE (COLE SUAS CREDENCIAIS AQUI) ==========
+        // ============================================
+        // 🔴 COLE SUAS CREDENCIAIS DO SUPABASE AQUI!
+        // ============================================
         const SUPABASE_URL = 'https://SEU_ID_AQUI.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+        
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        // =========================================================================
+        // ============================================
 
-        // Estado da aplicação
-        let modoAtual = 'login'; // 'login' ou 'cadastro'
+        let modoAtual = 'login';
         let usuarioLogado = JSON.parse(localStorage.getItem('usuario_logado')) || null;
         let valorDepositoSelecionado = { reais: 0, saldo: 0 };
 
@@ -1040,7 +1077,6 @@
             mostrarUsuarioLogado();
         }
 
-        // Funções de usuário
         function mostrarUsuarioLogado() {
             document.getElementById('deslogadoView').classList.add('hidden');
             document.getElementById('logadoView').classList.remove('hidden');
@@ -1056,10 +1092,12 @@
             document.getElementById('saldoDisplay').innerHTML = `R$ ${usuarioLogado.saldo.toFixed(2).replace('.', ',')}`;
         }
 
-        // Modal de login/cadastro
+        // ============================================
+        // FUNÇÕES DE LOGIN/CADASTRO (CORRIGIDAS)
+        // ============================================
         function abrirModal(tipo) {
             modoAtual = tipo;
-            const modal = document.getElementById('modalLogin');
+            
             if (tipo === 'login') {
                 document.getElementById('modalIcon').innerHTML = '🔐';
                 document.getElementById('modalTitle').innerHTML = 'Bem-vindo de volta!';
@@ -1077,7 +1115,8 @@
                 document.getElementById('cadastroFields').style.display = 'block';
                 document.getElementById('cadastroExtraFields').style.display = 'block';
             }
-            modal.style.display = 'flex';
+            
+            document.getElementById('modalLogin').style.display = 'flex';
         }
 
         function fecharModal(modalId) {
@@ -1092,72 +1131,109 @@
             }
         }
 
-        // Processar login/cadastro (simulação)
         async function processarForm() {
-            const email = document.getElementById('email').value;
-            const senha = document.getElementById('senha').value;
+            const email = document.getElementById('modalEmail').value;
+            const senha = document.getElementById('modalSenha').value;
+            
             document.getElementById('modalError').style.display = 'none';
-
+            
             if (modoAtual === 'login') {
-                // Simulação de login (substituir por consulta ao Supabase)
-                // Por enquanto, cria um usuário fictício se não existir
-                if (!usuarioLogado) {
-                    usuarioLogado = {
-                        id: 1,
-                        nome: 'Usuário Teste',
-                        email: email,
-                        saldo: 1000,
-                        whatsapp: '(11) 99999-9999'
-                    };
-                    localStorage.setItem('usuario_logado', JSON.stringify(usuarioLogado));
+                // MODO LOGIN
+                try {
+                    const { data, error } = await supabase
+                        .from('usuarios')
+                        .select('*')
+                        .eq('email', email)
+                        .eq('senha', senha);
+                    
+                    if (error) throw error;
+                    
+                    if (data && data.length > 0) {
+                        usuarioLogado = data[0];
+                        localStorage.setItem('usuario_logado', JSON.stringify(usuarioLogado));
+                        fecharModal('modalLogin');
+                        mostrarUsuarioLogado();
+                    } else {
+                        document.getElementById('modalError').textContent = 'Email ou senha incorretos!';
+                        document.getElementById('modalError').style.display = 'block';
+                    }
+                } catch (err) {
+                    document.getElementById('modalError').textContent = 'Erro: ' + err.message;
+                    document.getElementById('modalError').style.display = 'block';
                 }
-                fecharModal('modalLogin');
-                mostrarUsuarioLogado();
             } else {
-                // Modo cadastro
-                const nome = document.getElementById('nomeCadastro').value;
-                const whatsapp = document.getElementById('whatsapp').value;
+                // MODO CADASTRO
+                const nome = document.getElementById('modalNome').value;
+                const whatsapp = document.getElementById('modalWhatsapp').value;
                 const termos = document.getElementById('termos').checked;
-
+                
                 if (!nome || !email || !senha || !whatsapp) {
                     document.getElementById('modalError').textContent = 'Preencha todos os campos!';
                     document.getElementById('modalError').style.display = 'block';
                     return;
                 }
+                
                 if (!termos) {
-                    document.getElementById('modalError').textContent = 'Você deve aceitar os termos!';
+                    document.getElementById('modalError').textContent = 'Você precisa aceitar os termos!';
                     document.getElementById('modalError').style.display = 'block';
                     return;
                 }
-
-                // Simulação de cadastro
-                usuarioLogado = {
-                    id: Date.now(),
-                    nome: nome,
-                    email: email,
-                    saldo: 100, // Bônus de cadastro
-                    whatsapp: whatsapp
-                };
-                localStorage.setItem('usuario_logado', JSON.stringify(usuarioLogado));
-                fecharModal('modalLogin');
-                mostrarUsuarioLogado();
+                
+                try {
+                    // Verifica se email já existe
+                    const { data: existente } = await supabase
+                        .from('usuarios')
+                        .select('email')
+                        .eq('email', email);
+                    
+                    if (existente && existente.length > 0) {
+                        document.getElementById('modalError').textContent = 'Este email já está cadastrado!';
+                        document.getElementById('modalError').style.display = 'block';
+                        return;
+                    }
+                    
+                    // Insere novo usuário
+                    const { data, error } = await supabase
+                        .from('usuarios')
+                        .insert([{
+                            nome: nome,
+                            email: email,
+                            senha: senha,
+                            whatsapp: whatsapp,
+                            saldo: 100 // Bônus de cadastro
+                        }])
+                        .select();
+                    
+                    if (error) throw error;
+                    
+                    if (data && data.length > 0) {
+                        usuarioLogado = data[0];
+                        localStorage.setItem('usuario_logado', JSON.stringify(usuarioLogado));
+                        fecharModal('modalLogin');
+                        mostrarUsuarioLogado();
+                    }
+                } catch (err) {
+                    document.getElementById('modalError').textContent = 'Erro: ' + err.message;
+                    document.getElementById('modalError').style.display = 'block';
+                }
             }
         }
 
-        // Modal de depósito
+        // ============================================
+        // FUNÇÕES DE DEPÓSITO
+        // ============================================
         function abrirModalDeposito() {
             if (!usuarioLogado) {
                 alert('Faça login primeiro!');
+                abrirModal('login');
                 return;
             }
-            // Limpar seleção anterior
             document.querySelectorAll('.deposit-option').forEach(opt => opt.classList.remove('selected'));
             document.getElementById('customReais').value = '';
             valorDepositoSelecionado = { reais: 0, saldo: 0 };
             document.getElementById('modalDeposito').style.display = 'flex';
         }
 
-        // Selecionar opção de depósito
         document.querySelectorAll('.deposit-option').forEach(opt => {
             opt.addEventListener('click', function() {
                 document.querySelectorAll('.deposit-option').forEach(o => o.classList.remove('selected'));
@@ -1165,15 +1241,13 @@
                 const reais = parseFloat(this.dataset.reais);
                 const saldo = parseFloat(this.dataset.saldo);
                 valorDepositoSelecionado = { reais, saldo };
-                document.getElementById('customReais').value = ''; // limpa custom
+                document.getElementById('customReais').value = '';
             });
         });
 
-        // Processar depósito (abrir modal de pagamento)
         function processarDeposito() {
             let reais = valorDepositoSelecionado.reais;
             if (reais === 0) {
-                // Tentar valor customizado
                 const custom = parseFloat(document.getElementById('customReais').value);
                 if (custom && custom > 0) {
                     reais = custom;
@@ -1190,11 +1264,22 @@
             document.getElementById('modalPagamento').style.display = 'flex';
         }
 
-        // Confirmar pagamento (simulação)
-        function confirmarPagamento() {
-            // Adiciona saldo ao usuário
+        async function confirmarPagamento() {
             if (usuarioLogado) {
-                usuarioLogado.saldo += valorDepositoSelecionado.saldo;
+                const novoSaldo = usuarioLogado.saldo + valorDepositoSelecionado.saldo;
+                
+                // Atualiza no Supabase
+                const { error } = await supabase
+                    .from('usuarios')
+                    .update({ saldo: novoSaldo })
+                    .eq('id', usuarioLogado.id);
+                
+                if (error) {
+                    alert('Erro ao atualizar saldo: ' + error.message);
+                    return;
+                }
+                
+                usuarioLogado.saldo = novoSaldo;
                 localStorage.setItem('usuario_logado', JSON.stringify(usuarioLogado));
                 atualizarSaldoDisplay();
                 alert(`✅ Pagamento confirmado! Você adicionou R$ ${valorDepositoSelecionado.saldo.toFixed(2)} de saldo.`);
@@ -1202,7 +1287,6 @@
             fecharModal('modalPagamento');
         }
 
-        // Perfil
         function mostrarPerfil() {
             if (usuarioLogado) {
                 alert(`👤 ${usuarioLogado.nome}\n📧 ${usuarioLogado.email}\n📱 ${usuarioLogado.whatsapp}\n💰 Saldo: R$ ${usuarioLogado.saldo.toFixed(2)}`);
